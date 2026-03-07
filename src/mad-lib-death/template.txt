@@ -1,21 +1,21 @@
-When the time comes for me to leave this world, I want my loved ones to know exactly what I had in mind. My name is _______________ and these are my wishes.
-First, when it comes to my body, I would like to be: cremated / buried / donated to science / natural burial.
-If cremated, my ashes should be: kept in an urn / scattered at _______________ / divided among family / buried.
-If buried, I'd like to rest in _______________ (city, state, or cemetery name), preferably in a simple / elaborate / specific casket that looks like _______________.
+When the time comes for me to leave this world, I want my loved ones to know exactly what I had in mind. My name is {___} and these are my wishes.
+First, when it comes to my body, I would like to be: {cremated|buried|donated to science|natural burial}.
+If cremated, my ashes should be: {kept in an urn|scattered at a location|divided among family|buried}.
+If buried, I'd like to rest in {___} (city, state, or cemetery name), preferably in a {simple|elaborate|specific} casket that looks like {___}.
 
-As for a funeral or memorial service, I do / do not want one. If there is a service, I'd like it to be small and private / open to everyone I've ever met / somewhere in between.
-The service should be held at _______________ (a church, a park, the living room, a bar — no judgment).
-The mood should feel: somber and traditional / joyful and celebratory / short and sweet / chaotic, like my life.
+As for a funeral or memorial service, I {do|do not} want one. If there is a service, I'd like it to be {small and private|open to everyone I've ever met|somewhere in between}.
+The service should be held at {___} (a church, a park, the living room, a bar — no judgment).
+The mood should feel: {somber and traditional|joyful and celebratory|short and sweet|chaotic, like my life}.
 
-For music, I do / do not want songs played. If yes, please play _______________, _______________, and _______________. Under no circumstances should anyone play _______________.
+For music, I {do|do not} want songs played. If yes, please play {___}, {___}, and {___}. Under no circumstances should anyone play {___}.
 
-For flowers, I do / do not want arrangements. My favorite flower is _______________ and my favorite color is _______________. If you'd rather skip flowers, please ask guests to make a donation to _______________ / plant a tree / bring a dish to share / _______________ instead.
+For flowers, I {do|do not} want arrangements. My favorite flower is {___} and my favorite color is {___}. If you'd rather skip flowers, please ask guests to {make a donation|plant a tree|bring a dish to share|something else} instead.
 
-At the service, I would love for _______________ to say a few words. I do not want _______________ to speak (optional but cathartic to fill in).
-I do / do not want a religious or spiritual element. If yes, please include _______________.
+At the service, I would love for {___} to say a few words. I do not want {___} to speak (optional but cathartic to fill in).
+I {do|do not} want a religious or spiritual element. If yes, please include {___}.
 
-Afterward, I do / do not want a reception with food. If yes, please serve _______________ and _______________. There should / should not be alcohol. The gathering should last about _________ hours.
+Afterward, I {do|do not} want a reception with food. If yes, please serve {___} and {___}. There {should|should not} be alcohol. The gathering should last about {___} hours.
 
-One thing I really want people to remember about me is __________________________________________.
-The one thing I hope nobody brings up is __________________________________________.
-If there's anything left over in my estate, I'd like __________________________________________ to happen with it.
+One thing I really want people to remember about me is {___}.
+The one thing I hope nobody brings up is {___}.
+If there's anything left over in my estate, I'd like {___} to happen with it.
