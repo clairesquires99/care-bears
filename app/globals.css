@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf8f5;
+  --foreground: #1a1512;
+
+  --color-brand-50: #fef8f0;
+  --color-brand-100: #fde8c8;
+  --color-brand-200: #fbd08f;
+  --color-brand-300: #f9b55a;
+  --color-brand-400: #f59e0b;
+  --color-brand-500: #d97706;
+  --color-brand-600: #92400e;
+
+  --color-accent: #e11d48;
+  --color-accent-light: #ffe4e6;
+
+  --color-sage: #059669;
+  --color-sage-light: #d1fae5;
+
+  --color-surface: #ffffff;
+  --color-surface-muted: #f6f3ef;
 }
 
 @theme inline {
+  --font-sans: var(--font-plus-jakarta);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-plus-jakarta, sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+.parent-screen {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.parent-screen h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.parent-screen h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
 }
