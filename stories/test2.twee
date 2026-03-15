@@ -1,0 +1,112 @@
+:: StoryTitle
+Strange Town
+
+
+:: StoryData
+{
+  "ifid": "D4B2A1C3-9E7F-4A02-B8D6-5C3E1F2A0B94",
+  "format": "Harlowe",
+  "format-version": "3.3.9",
+  "start": "Start"
+}
+
+
+:: Start
+Once upon a time, there was a traveller who arrived in a strange new town.
+
+Feeling weary, they spotted a café and stepped inside.
+
+What is your character's name?
+
+(set $name to "")
+(live: 0s)[
+  (if: $name is "")[You'll need a name to continue.]
+]
+
+(input-box: bind $name, "=X=")
+
+[[Continue->Choose-drink]]
+
+
+:: Choose-drink
+Once upon a time, there was a traveller named //''$name''// who arrived in a strange new town. Feeling weary, they spotted a café and stepped inside, desperate for something to drink.
+
+It was a cold morning. What did they crave?
+
+[[A hot drink->Hot-drink]]
+[[A cold drink->Cold-drink]]
+
+
+:: Hot-drink
+(set: $drink to "a hot drink")
+
+The café only had two hot options. Which did they choose?
+
+[[Tea->Companion]]
+[[Coffee->Companion]]
+
+
+:: Cold-drink
+(set: $drink to "a cold drink")
+
+The café had two cold options. Which did they choose?
+
+[[Soda->Companion]]
+[[Iced tea->Companion]]
+
+
+:: Companion
+Once upon a time, there was a traveller named //''$name''// who arrived in a strange new town. Feeling weary, they spotted a café and stepped inside, desperate for (print: $drink). They sat down — and then, uninvited, someone appeared.
+
+Who sat down at their table?
+
+[[A mysterious stranger->The-secret]]
+[[A talking cat->The-secret]]
+
+
+:: The-secret
+(set: $companion to "")
+
+(if: $companion is "")[
+  The stranger leaned in close.
+
+  What secret did they whisper?
+
+  (input-box: bind $companion, "=X=")
+
+  [[Continue->Reaction]]
+]
+
+
+:: Reaction
+Once upon a time, there was a traveller named //''$name''// who arrived in a strange new town. They ordered (print: $drink) and sat down. Just then, a visitor appeared from nowhere and whispered: //"(print: $companion)."//
+
+How did $name react?
+
+[[Laughed it off->Ending-laugh]]
+[[Packed their bags immediately->Ending-flee]]
+[[Decided to investigate->Ending-investigate]]
+
+
+:: Ending-laugh
+Once upon a time, there was a traveller named //''$name''// who arrived in a strange new town. They ordered (print: $drink) and sat down. A mysterious visitor appeared and whispered: //"(print: $companion)."// ''$name simply laughed it off and ordered another round.''
+
+//The end.//
+
+[[Start again->Start]]
+
+
+:: Ending-flee
+Once upon a time, there was a traveller named //''$name''// who arrived in a strange new town. They ordered (print: $drink) and sat down. A mysterious visitor appeared and whispered: //"(print: $companion)."// ''$name immediately packed their bags and left town before sunset.''
+
+//The end.//
+
+[[Start again->Start]]
+
+
+:: Ending-investigate
+Once upon a time, there was a traveller named //''$name''// who arrived in a strange new town. They ordered (print: $drink) and sat down. A mysterious visitor appeared and whispered: //"(print: $companion)."// ''$name decided to investigate — and was never quite the same again.''
+
+//The end.//
+
+[[Start again->Start]]

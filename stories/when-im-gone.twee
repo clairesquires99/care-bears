@@ -1,0 +1,179 @@
+:: StoryTitle
+When I'm Gone
+
+
+:: StoryData
+{
+  "ifid": "B7D4E2F1-3A9C-4B8E-D1F5-2C7A0E4B6D83",
+  "format": "Harlowe",
+  "format-version": "3.3.9",
+  "start": "Start"
+}
+
+
+:: Start
+(set: $hasVision to "")
+(set: $disposition to "")
+(set: $ashesWishes to "")
+(set: $burialPlace to "")
+(set: $otherDisposition to "")
+(set: $serviceType to "")
+(set: $serviceLocation to "")
+(set: $serviceRequests to "")
+(set: $flowers to "")
+(set: $flowerPreference to "")
+(set: $donationCause to "")
+(set: $gatheringWishes to "")
+(set: $songWish to "")
+(set: $readingWish to "")
+(set: $anythingElse to "")
+
+I've thought about this more than I've let on. When it comes to what happens after I'm gone, I [[have a clear vision — I want things done a particular way->disposition]] [[don't have strong opinions — I trust my family to decide what feels right->open-handed]].
+
+
+:: open-handed
+(set: $hasVision to "I didn't have strong opinions about the arrangements. What mattered to me was that my family felt free to do whatever brought them the most comfort — and that they knew I meant that.")
+
+I didn't need everything done a particular way. But there are still a few things worth putting down, so the people I love aren't left guessing. When the time comes, I want to be [[buried->buried-details]] [[cremated->cremated-details]] [[something else->other-disposition]].
+
+
+:: disposition
+When the time comes, I want to be [[buried->buried-details]] [[cremated->cremated-details]] [[something else->other-disposition]].
+
+
+:: buried-details
+(set: $disposition to "buried")
+
+Being buried felt right to me. There's something I liked about the idea of having a place — somewhere people could go, if they wanted to. It doesn't have to be grand. As for where:
+(input-box: bind $burialPlace, "X", 1, "e.g. the churchyard in my hometown, near family, no strong preference...")
+
+[[On the service...->service-type]]
+
+
+:: cremated-details
+(set: $disposition to "cremated")
+
+Cremation felt right to me. I didn't want to take up much space — though I reserve the right to change my mind about that in other areas of life. As for my ashes:
+(input-box: bind $ashesWishes, "X", 1, "e.g. scattered somewhere I loved, kept by the family, buried in the garden...")
+
+[[On the service...->service-type]]
+
+
+:: other-disposition
+(set: $disposition to "other")
+
+I had something a little different in mind — one of those options that's becoming more common and that felt more like me. What I'd want:
+(input-box: bind $otherDisposition, "X", 1, "e.g. a natural burial, a woodland plot, body donation to science...")
+
+[[On the service...->service-type]]
+
+
+:: service-type
+People handle this part very differently, and I think that's right. There's no wrong answer here — it's about what would actually help the people left behind, and whether that matches what I'd want them to remember. For a service, my preference was:
+[[A formal funeral->service-formal]]
+[[Something informal — a gathering, a celebration of life->service-informal]]
+[[No service — just a quiet farewell->no-service]]
+[[Whatever my family decides->service-family-decides]]
+
+
+:: service-formal
+(set: $serviceType to "a formal funeral service")
+
+A proper funeral felt important to me. I wanted people to have a place to come, something to mark the occasion — not to be maudlin about it, but to acknowledge that something real had happened. For where I'd want it held, I was thinking [[a church or place of worship->service-requests]] [[a secular venue — somewhere that felt like me->service-requests]] [[the graveside or crematorium->service-requests]] [[wherever the family felt was right->service-requests]].
+
+
+:: service-informal
+(set: $serviceType to "an informal gathering — a celebration of life rather than a funeral")
+
+I never liked the idea of something too formal. I'd rather people were comfortable — able to talk, share a drink, tell a story or two without feeling like they were doing it wrong. For where I'd want that to happen: [[somewhere with meaning to me->service-requests]] [[wherever the family decides->service-requests]].
+
+
+:: no-service
+(set: $serviceType to "no formal service")
+(set: $serviceLocation to "")
+(set: $serviceRequests to "")
+
+A quiet farewell was enough for me. I didn't need a gathering, and I didn't want anyone to feel obliged to organise one on my behalf. The people who mattered to me would know.
+
+For flowers — and people do ask about this — I'd want [[flowers, the more the better->flower-details]] [[just a few, nothing elaborate->flower-simple]] [[no flowers — I'd rather people donated to a cause->donation-details]] [[whatever feels right->flowers-no-pref]].
+
+
+:: service-family-decides
+(set: $serviceType to "whatever feels right to my family")
+(set: $serviceLocation to "")
+(set: $serviceRequests to "")
+
+I genuinely meant it when I said I didn't mind. Whatever helped them most — that was what I wanted.
+
+For flowers — and people do ask about this — I'd want [[flowers, the more the better->flower-details]] [[just a few, nothing elaborate->flower-simple]] [[no flowers — I'd rather people donated to a cause->donation-details]] [[whatever feels right->flowers-no-pref]].
+
+
+:: service-requests
+(set: $serviceLocation to "the location my family felt was right")
+
+Is there anything specific I'd want included — or left out? A particular piece of music, a reading, a request about the tone of the thing. I'm not fussy, but if there was something:
+(input-box: bind $serviceRequests, "X", 1, "e.g. no long eulogies, a particular hymn or song, keep it short, stories welcome...")
+
+[[On flowers...->flowers]]
+
+
+:: flowers
+For flowers — and people do ask about this — I'd want [[flowers, the more the better->flower-details]] [[just a few, nothing elaborate->flower-simple]] [[no flowers — I'd rather people donated to a cause->donation-details]] [[whatever feels right->flowers-no-pref]].
+
+
+:: flower-details
+(set: $flowers to "flowers — as many as people wanted to bring")
+
+I always thought flowers at a funeral made the room feel like life was still present in it. If there was a particular kind I'd want:
+(input-box: bind $flowerPreference, "X", 1, "e.g. wildflowers, sunflowers, white flowers, nothing too formal...")
+
+[[On the gathering...->gathering]]
+
+
+:: flower-simple
+(set: $flowers to "just a few simple flowers — nothing elaborate")
+(set: $flowerPreference to "")
+
+[[On the gathering...->gathering]]
+
+
+:: flowers-no-pref
+(set: $flowers to "no strong preference — whatever felt right")
+(set: $flowerPreference to "")
+
+[[On the gathering...->gathering]]
+
+
+:: donation-details
+(set: $flowers to "no flowers — I'd rather people donated to a cause that mattered to me")
+
+There was something I'd want people to give to, if they were going to do anything. It felt more like me than cut flowers:
+(input-box: bind $donationCause, "X", 1, "e.g. a cancer charity, the local hospice, an organisation I believed in...")
+
+[[On the gathering...->gathering]]
+
+
+:: gathering
+After a funeral there's usually food, drink, and people telling stories they've been saving up. That part I didn't mind at all — in fact, I rather liked the thought of it. What I'd want it to look like:
+(input-box: bind $gatheringWishes, "X", 2, "e.g. something at the house, a proper meal at a pub, tea and sandwiches, whatever people needed...")
+
+[[One more thing...->song]]
+
+
+:: song
+Music is the thing that gets people, one way or another. I had thoughts about this. If there was something playing — at the service, or just somewhere in the day — I'd want:
+(input-box: bind $songWish, "X", 1, "e.g. a particular song, something quiet, something that would make people smile, nothing in particular...")
+
+[[And a reading...->reading]]
+
+
+:: reading
+I never expected anyone to stand up and perform something on my behalf. But if someone wanted to read a few words — something that felt right — I wouldn't have minded at all. If there was a reading, I'd want:
+(input-box: bind $readingWish, "X", 1, "e.g. a favourite poem, a passage from a book, something a family member wrote, nothing formal...")
+
+[[Last thing...->anything-else]]
+
+
+:: anything-else
+There's always something that doesn't fit anywhere else. A practical thing, maybe, or something I needed to say. Anything I'd want my family to know that I haven't covered:
+(input-box: bind $anythingElse, "X", 2, "e.g. where important documents are, who to call, something I'd want said, or nothing at all...")

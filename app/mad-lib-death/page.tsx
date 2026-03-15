@@ -1,12 +1,13 @@
 import MadLibDeath from "@/src/mad-lib-death";
+import { parseTwee } from "@/src/mad-lib-death/parse-twee";
 import fs from "fs";
 import path from "path";
 
 export default function MadLibDeathPage() {
-  const template = fs.readFileSync(
-    path.join(process.cwd(), "src/mad-lib-death/template.txt"),
+  const source = fs.readFileSync(
+    path.join(process.cwd(), "stories/test.twee"),
     "utf-8",
   );
-
-  return <MadLibDeath template={template} />;
+  const story = parseTwee(source);
+  return <MadLibDeath story={story} />;
 }
