@@ -1,10 +1,9 @@
 import Link from 'next/link'
 import { Topic } from '@/src/lib/types'
-import { Badge } from '@/src/components/ui/Badge'
 
 interface TopicCardProps {
   topic: Topic
-  conversationStatus?: string | null
+  hasSent?: boolean
 }
 
 const categoryColors: Record<string, { bg: string; color: string }> = {
@@ -13,7 +12,7 @@ const categoryColors: Record<string, { bg: string; color: string }> = {
   Finances: { bg: '#d1fae5', color: '#059669' },
 }
 
-export function TopicCard({ topic, conversationStatus }: TopicCardProps) {
+export function TopicCard({ topic, hasSent }: TopicCardProps) {
   const cat = categoryColors[topic.category] ?? { bg: '#f6f3ef', color: '#6b5e52' }
 
   return (
@@ -29,10 +28,14 @@ export function TopicCard({ topic, conversationStatus }: TopicCardProps) {
         >
           {topic.category}
         </span>
-        {conversationStatus && (
-          <Badge status={conversationStatus as 'draft' | 'sent' | 'in-progress' | 'completed'}>
-            {conversationStatus}
-          </Badge>
+        {hasSent && (
+          <span
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
+            style={{ background: '#f6f3ef', color: '#9a8a7d' }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: '#d97706' }} />
+            Sent before
+          </span>
         )}
       </div>
       <h3 className="font-bold text-lg mb-2" style={{ color: '#1a1512' }}>

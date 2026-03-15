@@ -1,15 +1,31 @@
 'use client'
 
-import { use, useState } from 'react'
+import { use, useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import topicsData from '@/src/data/topics.json'
 import { Topic, Relationship } from '@/src/lib/types'
 import { Button } from '@/src/components/ui/Button'
+import { Badge } from '@/src/components/ui/Badge'
 import { Card } from '@/src/components/ui/Card'
 import { RelationshipPicker } from '@/src/components/RelationshipPicker'
 import { createClient } from '@/src/lib/supabase/client'
 
 const topics = topicsData as Topic[]
+
+type ConvRow = {
+  id: string
+  status: string
+  sent_at: string | null
+  access_code: string | null
+  relationships: { display_name: string } | null
+}
+
+const statusLabel: Record<string, string> = {
+  sent: 'Sent',
+  'in-progress': 'In Progress',
+  completed: 'Completed',
+}
 
 function generateCode(): string {
   return Math.random().toString(36).slice(2, 8).toUpperCase()
@@ -23,6 +39,22 @@ export default function TopicDetailPage({ params }: { params: Promise<{ topicId:
   const [showPicker, setShowPicker] = useState(false)
   const [sentCode, setSentCode] = useState<{ code: string; label: string } | null>(null)
   const [sending, setSending] = useState(false)
+  const [pastConvs, setPastConvs] = useState<ConvRow[]>([])
+
+  const fetchPastConvs = useCallback(async () => {
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('conversations')
+      .select('id, status, sent_at, access_code, relationships(display_name)')
+      .eq('topic_id', topicId)
+      .neq('status', 'draft')
+      .order('created_at', { ascending: false })
+    setPastConvs((data as unknown as ConvRow[]) ?? [])
+  }, [topicId])
+
+  useEffect(() => {
+    fetchPastConvs()
+  }, [fetchPastConvs])
 
   if (!topic) {
     return (
@@ -63,6 +95,7 @@ export default function TopicDetailPage({ params }: { params: Promise<{ topicId:
       label: relationships.map((r) => r.display_name).join(', '),
     })
     setSending(false)
+    fetchPastConvs()
   }
 
   const previewQuestions = topic.questions.slice(0, 3)
@@ -168,6 +201,54 @@ export default function TopicDetailPage({ params }: { params: Promise<{ topicId:
                 Talking about {topic.title.toLowerCase()} is one of the most caring things you can do for your family. It provides clarity and reduces stress during difficult times, and ensures your loved one&apos;s wishes are honored.
               </p>
             </div>
+
+            {/* Previously sent */}
+            {pastConvs.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-sm font-semibold mb-3" style={{ color: '#1a1512' }}>
+                  Previously sent
+                </h3>
+                <div className="space-y-2">
+                  {pastConvs.map((conv) => {
+                    const recipient = conv.relationships?.display_name ?? 'Unknown'
+                    const sentDate = conv.sent_at
+                      ? new Date(conv.sent_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                      : null
+
+                    return (
+                      <div
+                        key={conv.id}
+                        className="rounded-2xl p-3 flex items-center gap-3"
+                        style={{ background: '#f6f3ef' }}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium truncate" style={{ color: '#1a1512' }}>
+                            {recipient}
+                          </p>
+                          {sentDate && (
+                            <p className="text-xs" style={{ color: '#9a8a7d' }}>
+                              {sentDate}
+                            </p>
+                          )}
+                        </div>
+                        <Badge status={conv.status as 'sent' | 'in-progress' | 'completed'}>
+                          {statusLabel[conv.status] ?? conv.status}
+                        </Badge>
+                        {conv.status === 'completed' && (
+                          <Link
+                            href={`/conversations/${conv.id}`}
+                            className="text-xs font-medium whitespace-nowrap"
+                            style={{ color: '#d97706' }}
+                          >
+                            View →
+                          </Link>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

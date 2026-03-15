@@ -9,18 +9,15 @@ export default async function LibraryPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Fetch user's conversations to show status badges
   const { data: conversations } = user
     ? await supabase
         .from('conversations')
-        .select('topic_id, status')
+        .select('topic_id')
         .eq('user_id', user.id)
+        .neq('status', 'draft')
     : { data: [] }
 
-  const statusByTopic = (conversations ?? []).reduce<Record<string, string>>(
-    (acc, c) => ({ ...acc, [c.topic_id]: c.status }),
-    {}
-  )
+  const sentTopicIds = new Set((conversations ?? []).map((c) => c.topic_id))
 
   return (
     <div className="p-8">
@@ -35,11 +32,7 @@ export default async function LibraryPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {topics.map((topic) => (
-          <TopicCard
-            key={topic.id}
-            topic={topic}
-            conversationStatus={statusByTopic[topic.id] ?? null}
-          />
+          <TopicCard key={topic.id} topic={topic} hasSent={sentTopicIds.has(topic.id)} />
         ))}
       </div>
     </div>
