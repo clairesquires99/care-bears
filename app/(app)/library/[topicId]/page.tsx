@@ -1,0 +1,234 @@
+'use client'
+
+import { use, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import topicsData from '@/src/data/topics.json'
+import { Topic, Relationship } from '@/src/lib/types'
+import { Button } from '@/src/components/ui/Button'
+import { Card } from '@/src/components/ui/Card'
+import { RelationshipPicker } from '@/src/components/RelationshipPicker'
+import { createClient } from '@/src/lib/supabase/client'
+
+const topics = topicsData as Topic[]
+
+function generateCode(): string {
+  return Math.random().toString(36).slice(2, 8).toUpperCase()
+}
+
+export default function TopicDetailPage({ params }: { params: Promise<{ topicId: string }> }) {
+  const { topicId } = use(params)
+  const topic = topics.find((t) => t.id === topicId)
+  const router = useRouter()
+
+  const [showPicker, setShowPicker] = useState(false)
+  const [sentCode, setSentCode] = useState<{ code: string; label: string } | null>(null)
+  const [sending, setSending] = useState(false)
+
+  if (!topic) {
+    return (
+      <div className="p-8">
+        <p style={{ color: '#6b5e52' }}>Topic not found.</p>
+        <button onClick={() => router.back()} className="mt-4 underline text-sm" style={{ color: '#d97706' }}>
+          ← Back
+        </button>
+      </div>
+    )
+  }
+
+  async function handleSend(relationships: Relationship[]) {
+    setShowPicker(false)
+    setSending(true)
+
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const codes: string[] = []
+
+    for (const rel of relationships) {
+      const code = generateCode()
+      await supabase.from('conversations').insert({
+        user_id: user.id,
+        relationship_id: rel.id,
+        topic_id: topic!.id,
+        status: 'sent',
+        access_code: code,
+        sent_at: new Date().toISOString(),
+      })
+      codes.push(code)
+    }
+
+    setSentCode({
+      code: codes.join(', '),
+      label: relationships.map((r) => r.display_name).join(', '),
+    })
+    setSending(false)
+  }
+
+  const previewQuestions = topic.questions.slice(0, 3)
+
+  return (
+    <div className="p-8">
+      {showPicker && (
+        <RelationshipPicker
+          onConfirm={handleSend}
+          onClose={() => setShowPicker(false)}
+        />
+      )}
+
+      {/* Breadcrumb */}
+      <div className="mb-6">
+        <button
+          onClick={() => router.back()}
+          className="text-sm"
+          style={{ color: '#9a8a7d' }}
+        >
+          ← Library
+        </button>
+      </div>
+
+      <div className="flex gap-10 flex-col lg:flex-row">
+        {/* Left panel */}
+        <div className="lg:w-80 lg:shrink-0">
+          <div className="lg:sticky lg:top-8">
+            <span
+              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mb-4"
+              style={{
+                background: '#fde8c8',
+                color: '#92400e',
+              }}
+            >
+              {topic.category}
+            </span>
+            <h1 className="text-2xl font-bold mb-3" style={{ color: '#1a1512' }}>
+              {topic.title}
+            </h1>
+            <p className="text-sm leading-relaxed mb-6" style={{ color: '#6b5e52' }}>
+              {topic.description}
+            </p>
+
+            {/* Metadata */}
+            <div className="flex flex-wrap gap-4 text-xs mb-6" style={{ color: '#9a8a7d' }}>
+              <div>
+                <span className="font-semibold" style={{ color: '#1a1512' }}>Questions</span>
+                <br />{topic.questions.length}
+              </div>
+              <div>
+                <span className="font-semibold" style={{ color: '#1a1512' }}>Category</span>
+                <br />{topic.category}
+              </div>
+            </div>
+
+            {/* Send code toast */}
+            {sentCode && (
+              <div
+                className="rounded-2xl p-4 mb-5 border"
+                style={{ background: '#d1fae5', borderColor: '#059669' }}
+              >
+                <p className="text-sm font-semibold mb-1" style={{ color: '#059669' }}>
+                  Sent to {sentCode.label} ✓
+                </p>
+                <p className="text-xs mb-2" style={{ color: '#065f46' }}>
+                  Share this code with them:
+                </p>
+                <p className="text-2xl font-bold tracking-widest" style={{ color: '#1a1512' }}>
+                  {sentCode.code}
+                </p>
+                <p className="text-xs mt-2" style={{ color: '#6b5e52' }}>
+                  They can enter this at /parent to start the conversation.
+                </p>
+                <p className="text-xs mt-1" style={{ color: '#9a8a7d' }}>
+                  Email sending coming soon. Share this code directly for now.
+                </p>
+              </div>
+            )}
+
+            <Button
+              onClick={() => setShowPicker(true)}
+              disabled={sending}
+              className="w-full mb-3"
+            >
+              {sending ? 'Sending...' : '▶ Send to...'}
+            </Button>
+
+            <button
+              className="w-full text-sm py-2 rounded-xl border text-center"
+              style={{ borderColor: '#e5ddd5', color: '#9a8a7d' }}
+              onClick={() => alert('Customization coming soon.')}
+            >
+              ✏ Customize Prompts
+            </button>
+
+            {/* Why talk about this */}
+            <div className="mt-6 rounded-2xl p-4" style={{ background: '#f6f3ef' }}>
+              <h3 className="text-sm font-semibold mb-2" style={{ color: '#1a1512' }}>
+                ❓ Why Talk About This?
+              </h3>
+              <p className="text-xs leading-relaxed" style={{ color: '#6b5e52' }}>
+                Talking about {topic.title.toLowerCase()} is one of the most caring things you can do for your family. It provides clarity and reduces stress during difficult times, and ensures your loved one&apos;s wishes are honored.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right panel: preview questions */}
+        <div className="flex-1">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="font-bold text-lg" style={{ color: '#1a1512' }}>
+              Preview Sample Questions
+            </h2>
+            <span className="text-xs" style={{ color: '#9a8a7d' }}>
+              Showing {previewQuestions.length} of {topic.questions.length}
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            {previewQuestions.map((q, i) => (
+              <Card key={q.id} muted className="p-5">
+                <div className="flex gap-3">
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5"
+                    style={{ background: '#fbd08f', color: '#92400e' }}
+                  >
+                    {i + 1}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium mb-2" style={{ color: '#1a1512' }}>
+                      {q.text}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="text-xs px-2.5 py-1 rounded-full font-medium"
+                        style={{ background: '#ffffff', color: '#9a8a7d' }}
+                      >
+                        {q.type === 'choice' ? '◉ Multiple choice' : q.type === 'scale' ? '↔ Scale' : '✏ Free text'}
+                      </span>
+                      {q.options && (
+                        <span className="text-xs" style={{ color: '#9a8a7d' }}>
+                          {q.options.length} options
+                        </span>
+                      )}
+                    </div>
+                    {q.type === 'choice' && q.options && (
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {q.options.map((opt) => (
+                          <span
+                            key={opt}
+                            className="text-xs px-3 py-1.5 rounded-xl border"
+                            style={{ borderColor: '#e5ddd5', color: '#6b5e52', background: '#ffffff' }}
+                          >
+                            {opt}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

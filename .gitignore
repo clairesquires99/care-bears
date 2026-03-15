@@ -460,3 +460,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 >>>>>>> origin/main
+.claude/

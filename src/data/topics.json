@@ -1,0 +1,167 @@
+[
+  {
+    "id": "end-of-life-wishes",
+    "title": "End-of-Life Wishes",
+    "description": "Document how you'd like to be remembered and cared for. This conversation helps your family honor your wishes with clarity and confidence.",
+    "category": "Legacy",
+    "questions": [
+      {
+        "id": "eol-q1",
+        "text": "How would you like your body to be cared for after you pass?",
+        "sentenceTemplate": "For my body, I would like [blank].",
+        "type": "choice",
+        "options": ["Buried", "Cremated", "Donated to science"],
+        "followUps": [
+          { "when": "Cremated", "next": "eol-q2a" },
+          { "when": "Buried", "next": "eol-q2b" },
+          { "when": "Donated to science", "next": "eol-q3" }
+        ],
+        "next": "eol-q3"
+      },
+      {
+        "id": "eol-q2a",
+        "text": "What would you like done with your ashes?",
+        "sentenceTemplate": "I would like my ashes to be [blank].",
+        "type": "choice",
+        "options": ["Kept by family", "Scattered in a meaningful place", "Placed in a memorial"],
+        "followUps": [],
+        "next": "eol-q3"
+      },
+      {
+        "id": "eol-q2b",
+        "text": "Where would you like to be buried?",
+        "sentenceTemplate": "I would like to be buried [blank].",
+        "type": "choice",
+        "options": ["Near family", "In my hometown", "In a place I love"],
+        "followUps": [],
+        "next": "eol-q3"
+      },
+      {
+        "id": "eol-q3",
+        "text": "What kind of service or ceremony would you prefer?",
+        "sentenceTemplate": "For my service, I would prefer [blank].",
+        "type": "choice",
+        "options": ["A traditional funeral", "A celebration of life", "A small private gathering", "No service"],
+        "followUps": [],
+        "next": "eol-q4"
+      },
+      {
+        "id": "eol-q4",
+        "text": "Is there a specific song, reading, or tradition you'd like included?",
+        "sentenceTemplate": "I would like my service to include [blank].",
+        "type": "text",
+        "followUps": [],
+        "next": "eol-q5"
+      },
+      {
+        "id": "eol-q5",
+        "text": "Who should be notified first when you pass?",
+        "sentenceTemplate": "Please notify [blank] first.",
+        "type": "text",
+        "followUps": [],
+        "next": null
+      }
+    ]
+  },
+  {
+    "id": "medical-emergency-planning",
+    "title": "Medical Emergency Planning",
+    "description": "Documenting your healthcare preferences and emergency details. This isn't just about paperwork — it's about peace of mind for you and your loved ones.",
+    "category": "Healthcare",
+    "questions": [
+      {
+        "id": "med-q1",
+        "text": "Who should be the first call in a medical emergency?",
+        "sentenceTemplate": "In a medical emergency, please call [blank] first.",
+        "type": "text",
+        "followUps": [],
+        "next": "med-q2"
+      },
+      {
+        "id": "med-q2",
+        "text": "What are your thoughts on life-sustaining treatments (DNR)?",
+        "sentenceTemplate": "For life-sustaining treatment, my preference is [blank].",
+        "type": "choice",
+        "options": ["Full resuscitation", "Comfort care only (DNR)", "Discuss with family first"],
+        "followUps": [],
+        "next": "med-q3"
+      },
+      {
+        "id": "med-q3",
+        "text": "Where do you keep your physical health records?",
+        "sentenceTemplate": "My health records are kept [blank].",
+        "type": "text",
+        "followUps": [],
+        "next": "med-q4"
+      },
+      {
+        "id": "med-q4",
+        "text": "Do you have any known allergies or important medical conditions to note?",
+        "sentenceTemplate": "Important medical information: [blank].",
+        "type": "text",
+        "followUps": [],
+        "next": "med-q5"
+      },
+      {
+        "id": "med-q5",
+        "text": "Who do you authorize to make medical decisions on your behalf?",
+        "sentenceTemplate": "I authorize [blank] to make medical decisions for me.",
+        "type": "text",
+        "followUps": [],
+        "next": null
+      }
+    ]
+  },
+  {
+    "id": "finances-and-estate",
+    "title": "Finances & Estate",
+    "description": "A thoughtful walkthrough of your financial picture and estate plans. Helps your family avoid confusion and unnecessary stress during difficult times.",
+    "category": "Finances",
+    "questions": [
+      {
+        "id": "fin-q1",
+        "text": "Do you have a will or trust in place?",
+        "sentenceTemplate": "Regarding my estate, [blank].",
+        "type": "choice",
+        "options": ["I have a will", "I have a trust", "I don't have one yet", "I'm working on it"],
+        "followUps": [
+          { "when": "I have a will", "next": "fin-q2" },
+          { "when": "I have a trust", "next": "fin-q2" }
+        ],
+        "next": "fin-q3"
+      },
+      {
+        "id": "fin-q2",
+        "text": "Where is your will or trust document located?",
+        "sentenceTemplate": "My will/trust document is located [blank].",
+        "type": "text",
+        "followUps": [],
+        "next": "fin-q3"
+      },
+      {
+        "id": "fin-q3",
+        "text": "Who is your primary financial beneficiary?",
+        "sentenceTemplate": "My primary financial beneficiary is [blank].",
+        "type": "text",
+        "followUps": [],
+        "next": "fin-q4"
+      },
+      {
+        "id": "fin-q4",
+        "text": "Do you have life insurance? If so, where is that policy?",
+        "sentenceTemplate": "For life insurance, [blank].",
+        "type": "text",
+        "followUps": [],
+        "next": "fin-q5"
+      },
+      {
+        "id": "fin-q5",
+        "text": "Who should handle your financial affairs if you cannot?",
+        "sentenceTemplate": "I would like [blank] to handle my financial affairs.",
+        "type": "text",
+        "followUps": [],
+        "next": null
+      }
+    ]
+  }
+]
