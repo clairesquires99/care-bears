@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Button } from '@/src/components/ui/Button'
 
 export default function CompletePage() {
   return (
@@ -28,13 +28,9 @@ export default function CompletePage() {
           <p className="text-sm mb-4" style={{ color: '#9a8a7d' }}>
             Care Conversations helps families have these important discussions.
           </p>
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center px-6 py-3 rounded-xl text-white font-semibold text-base"
-            style={{ background: '#d97706' }}
-          >
+          <Button href="/">
             Learn more →
-          </Link>
+          </Button>
         </div>
       </div>
     </main>

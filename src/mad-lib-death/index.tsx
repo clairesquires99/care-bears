@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/src/components/ui/Button";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -265,9 +266,7 @@ export default function InteractiveStory({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
               >
-                <StoryTag onClick={() => router.push(completePath!)}>
-                  Finish
-                </StoryTag>
+                <Button href={completePath}>Finish</Button>
               </motion.div>
             </AnimatePresence>
           )}
