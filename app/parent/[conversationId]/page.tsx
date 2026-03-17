@@ -1,4 +1,4 @@
-import MadLibDeath from "@/src/mad-lib-death";
+import InteractiveStory from "@/src/mad-lib-death";
 import { parseTwee } from "@/src/mad-lib-death/parse-twee";
 import { createClient } from "@/src/lib/supabase/server";
 import topicsData from "@/src/data/topics.json";
@@ -42,5 +42,10 @@ export default async function ParentConversationPage({
   );
   const story = parseTwee(source);
 
-  return <MadLibDeath story={story} />;
+  return (
+    <InteractiveStory
+      story={story}
+      completePath={`/parent/${conversationId}/complete`}
+    />
+  );
 }

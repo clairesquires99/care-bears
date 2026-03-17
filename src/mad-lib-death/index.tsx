@@ -1,7 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { StoryTag } from "../components/StoryTag";
 import { TweeLink, TweeStory } from "./parse-twee";
 
 const CHARS_PER_SECOND = 150;
@@ -90,7 +92,13 @@ function FrozenPassage({
 
 type HistoryEntry = { text: string; choiceLabel: string };
 
-export default function MadLibDeath({ story }: { story: TweeStory }) {
+export default function InteractiveStory({
+  story,
+  completePath,
+}: {
+  story: TweeStory;
+  completePath?: string;
+}) {
   const [variables, setVariables] = useState<Record<string, string>>({});
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [currentId, setCurrentId] = useState(story.startPassage);
@@ -173,10 +181,14 @@ export default function MadLibDeath({ story }: { story: TweeStory }) {
     navigate(value, inp.submitTarget, { [inp.variable]: value });
   }
 
+  const router = useRouter();
+
   const displayNodes = animating ? sliceRich(richNodes, charIndex) : richNodes;
   const paragraphs = buildParagraphs(displayNodes);
   const showChoices = !animating && passageChoices !== null;
   const showInput = !animating && !!currentPassage.input;
+  const showFinish =
+    !animating && !passageChoices && !currentPassage.input && !!completePath;
 
   return (
     <main
@@ -208,13 +220,12 @@ export default function MadLibDeath({ story }: { story: TweeStory }) {
                         className="ml-2 inline-flex flex-wrap gap-2"
                       >
                         {passageChoices!.map((link) => (
-                          <button
+                          <StoryTag
                             key={link.target}
                             onClick={() => navigate(link.label, link.target)}
-                            className="rounded-full border border-zinc-300 bg-zinc-100 px-4 py-1.5 text-sm text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-200"
                           >
                             {link.label}
-                          </button>
+                          </StoryTag>
                         ))}
                       </motion.span>
                     </AnimatePresence>
@@ -236,12 +247,9 @@ export default function MadLibDeath({ story }: { story: TweeStory }) {
                           className="rounded-full border border-zinc-300 bg-zinc-50 px-4 py-1.5 text-sm text-zinc-700 outline-none placeholder:text-zinc-400 focus:border-zinc-400"
                           placeholder={currentPassage.input!.placeholder}
                         />
-                        <button
-                          onClick={handleInput}
-                          className="rounded-full border border-zinc-300 bg-zinc-100 px-4 py-1.5 text-sm text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-200"
-                        >
+                        <StoryTag onClick={handleInput}>
                           {currentPassage.input!.submitLabel}
-                        </button>
+                        </StoryTag>
                       </motion.span>
                     </AnimatePresence>
                   )}
@@ -249,6 +257,20 @@ export default function MadLibDeath({ story }: { story: TweeStory }) {
               );
             })}
           </div>
+
+          {showFinish && (
+            <AnimatePresence>
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <StoryTag onClick={() => router.push(completePath!)}>
+                  Finish
+                </StoryTag>
+              </motion.div>
+            </AnimatePresence>
+          )}
         </div>
       </div>
     </main>

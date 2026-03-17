@@ -1,4 +1,4 @@
-import MadLibDeath from "@/src/mad-lib-death";
+import InteractiveStory from "@/src/mad-lib-death";
 import { parseTwee } from "@/src/mad-lib-death/parse-twee";
 import fs from "fs";
 import path from "path";
@@ -9,5 +9,5 @@ export default function MadLibDeathPage() {
     "utf-8",
   );
   const story = parseTwee(source);
-  return <MadLibDeath story={story} />;
+  return <InteractiveStory story={story} />;
 }
