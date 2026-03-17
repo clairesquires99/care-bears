@@ -197,6 +197,11 @@ export default function InteractiveStory({
       className="h-screen overflow-y-auto bg-white px-8 py-16 dark:bg-black"
     >
       <div className="mx-auto max-w-2xl">
+        <div className="mb-8">
+          <Button variant="muted" size="sm" onClick={() => router.back()}>
+            ✕ Quit
+          </Button>
+        </div>
         <div className="flex flex-col gap-8 text-lg leading-8 text-zinc-800 dark:text-zinc-200">
           {history.map((entry, i) => (
             <FrozenPassage
@@ -265,6 +270,7 @@ export default function InteractiveStory({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
+                className="flex justify-end"
               >
                 <Button href={completePath}>Finish</Button>
               </motion.div>
