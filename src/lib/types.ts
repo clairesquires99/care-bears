@@ -32,27 +32,12 @@ export interface Answer {
   created_at: string
 }
 
-export interface FollowUp {
-  when: string
-  next: string
-}
-
-export interface Question {
-  id: string
-  text: string
-  sentenceTemplate: string
-  type: 'text' | 'choice' | 'scale'
-  options?: string[]
-  followUps?: FollowUp[]
-  next: string | null
-}
-
 export interface Topic {
   id: string
   title: string
   description: string
   category: string
-  questions: Question[]
+  storyFile: string
 }
 
 export interface ConversationWithRelationship extends Conversation {
