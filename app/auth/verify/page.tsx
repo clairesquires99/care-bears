@@ -15,7 +15,7 @@ export default function VerifyPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!code || code.length < 6) return
+    if (!code) return
     setLoading(true)
     setError('')
 
@@ -69,7 +69,6 @@ export default function VerifyPage() {
             <input
               type="text"
               inputMode="numeric"
-              maxLength={6}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
               placeholder="000000"
@@ -88,7 +87,7 @@ export default function VerifyPage() {
 
             <button
               type="submit"
-              disabled={loading || code.length < 6}
+              disabled={loading || !code}
               className="w-full py-3 px-6 rounded-xl font-semibold text-white text-base transition-all disabled:opacity-60"
               style={{ background: '#d97706' }}
             >
