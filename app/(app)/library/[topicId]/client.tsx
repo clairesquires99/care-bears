@@ -3,7 +3,7 @@
 import { RelationshipPicker } from "@/src/components/RelationshipPicker";
 import { Badge } from "@/src/components/ui/Badge";
 import { Button } from "@/src/components/ui/Button";
-import { CompletedStory } from "@/src/mad-lib-death/CompletedStory";
+import { StaticStoryPreview } from "@/src/mad-lib-death/StaticStoryPreview";
 import { TweeStory } from "@/src/mad-lib-death/parse-twee";
 import topicsData from "@/src/data/topics.json";
 import { createClient } from "@/src/lib/supabase/client";
@@ -114,8 +114,6 @@ export default function TopicDetailClient({
     setSending(false);
     fetchPastConvs();
   }
-
-  const completedConv = pastConvs.find((c) => c.status === "completed");
 
   return (
     <div className="p-8">
@@ -296,9 +294,7 @@ export default function TopicDetailClient({
         </div>
 
         <div className="flex-1">
-          {completedConv && story ? (
-            <CompletedStory story={story} choices={completedConv.choices} />
-          ) : null}
+          {story && <StaticStoryPreview story={story} />}
         </div>
       </div>
     </div>

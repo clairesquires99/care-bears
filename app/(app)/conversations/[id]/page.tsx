@@ -1,9 +1,13 @@
 import { Badge } from "@/src/components/ui/Badge";
+import { CompletedStory } from "@/src/mad-lib-death/CompletedStory";
+import { parseTwee } from "@/src/mad-lib-death/parse-twee";
 import topicsData from "@/src/data/topics.json";
 import { createClient } from "@/src/lib/supabase/server";
 import { Topic } from "@/src/lib/types";
+import fs from "fs";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import path from "path";
 
 const topics = topicsData as Topic[];
 
@@ -25,6 +29,13 @@ export default async function ConversationDetailPage({
 
   const topic = topics.find((t) => t.id === conv.topic_id);
   if (!topic) notFound();
+
+  const story = parseTwee(
+    fs.readFileSync(
+      path.join(process.cwd(), "stories", topic.storyFile),
+      "utf-8",
+    ),
+  );
 
   const { data: answers } = await supabase
     .from("answers")
@@ -89,6 +100,10 @@ export default async function ConversationDetailPage({
           )}
         </div>
       </div>
+
+      {conv.status === "completed" && conv.choices && (
+        <CompletedStory story={story} choices={conv.choices} />
+      )}
     </div>
   );
 }
