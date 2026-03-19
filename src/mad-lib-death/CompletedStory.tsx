@@ -114,14 +114,14 @@ export function CompletedStory({
       {history.map((entry, i) => {
         const paragraphs = buildParagraphs(parseRich(entry.text));
         return (
-          <div key={i} className="opacity-50">
+          <div key={i}>
             {paragraphs.map((para, j) => {
               const isLast = j === paragraphs.length - 1;
               return (
                 <p key={j} className={j > 0 ? "mt-4" : ""}>
                   {para.length === 0 ? <>&nbsp;</> : para.map(renderNode)}
                   {isLast && (
-                    <span className="ml-2 inline-block rounded-full border border-zinc-300 bg-zinc-100 px-2.5 py-0.5 text-sm text-zinc-700 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                    <span className="ml-2 inline-block rounded-full border border-orange-300 bg-orange-100 px-2.5 py-0.5 text-sm text-orange-700">
                       {entry.choiceLabel}
                     </span>
                   )}
