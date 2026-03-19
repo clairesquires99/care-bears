@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/src/components/ui/Button";
+import { createClient } from "@/src/lib/supabase/client";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -96,9 +97,11 @@ type HistoryEntry = { text: string; choiceLabel: string };
 export default function InteractiveStory({
   story,
   completePath,
+  conversationId,
 }: {
   story: TweeStory;
   completePath?: string;
+  conversationId?: string;
 }) {
   const [variables, setVariables] = useState<Record<string, string>>({});
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -106,6 +109,7 @@ export default function InteractiveStory({
   const [charIndex, setCharIndex] = useState(0);
   const [inputValue, setInputValue] = useState("");
   const containerRef = useRef<HTMLElement>(null);
+  const choicesRef = useRef<number[]>([]);
 
   const currentPassage = story.passages[currentId];
 
@@ -163,11 +167,25 @@ export default function InteractiveStory({
     return () => clearTimeout(id);
   }, [charIndex, totalChars]);
 
+  function saveProgress(status: "in-progress" | "completed" = "in-progress") {
+    if (!conversationId) return;
+    createClient()
+      .from("conversations")
+      .update({ choices: choicesRef.current, status })
+      .eq("id", conversationId)
+      .then(() => {});
+  }
+
   function navigate(
     choiceLabel: string,
     target: string,
     newVars?: Record<string, string>,
+    choiceIndex?: number,
   ) {
+    if (choiceIndex !== undefined) {
+      choicesRef.current = [...choicesRef.current, choiceIndex];
+      saveProgress();
+    }
     setHistory((h) => [...h, { text: beforeText, choiceLabel }]);
     if (newVars) setVariables((v) => ({ ...v, ...newVars }));
     setCurrentId(target);
@@ -225,10 +243,10 @@ export default function InteractiveStory({
                         exit={{ opacity: 0 }}
                         className="ml-2 inline-flex flex-wrap gap-2"
                       >
-                        {passageChoices!.map((link) => (
+                        {passageChoices!.map((link, idx) => (
                           <StoryTag
                             key={link.target}
-                            onClick={() => navigate(link.label, link.target)}
+                            onClick={() => navigate(link.label, link.target, undefined, idx)}
                           >
                             {link.label}
                           </StoryTag>
@@ -272,7 +290,14 @@ export default function InteractiveStory({
                 exit={{ opacity: 0 }}
                 className="flex justify-end"
               >
-                <Button href={completePath}>Finish</Button>
+                <Button
+                  onClick={() => {
+                    saveProgress("completed");
+                    router.push(completePath!);
+                  }}
+                >
+                  Finish
+                </Button>
               </motion.div>
             </AnimatePresence>
           )}

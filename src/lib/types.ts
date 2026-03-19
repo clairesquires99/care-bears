@@ -22,6 +22,8 @@ export interface Conversation {
   access_code: string | null
   sent_at: string | null
   created_at: string
+  updated_at: string | null
+  choices: number[]
 }
 
 export interface Answer {

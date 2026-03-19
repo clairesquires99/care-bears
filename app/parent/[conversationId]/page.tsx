@@ -46,6 +46,7 @@ export default async function ParentConversationPage({
     <InteractiveStory
       story={story}
       completePath={`/parent/${conversationId}/complete`}
+      conversationId={conversationId}
     />
   );
 }
