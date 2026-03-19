@@ -1,0 +1,44 @@
+:: StoryTitle
+Test Story
+
+:: StoryData
+{
+  "ifid": "B2C3D4E5-F6A7-8901-BCDE-F12345678901",
+  "format": "Harlowe",
+  "format-version": "3.3.9",
+  "start": "Start"
+}
+
+:: Start
+(set: $petName to "")
+
+What is your pet's name?
+
+(input-box: bind $petName, "X", 1, "Enter your pet's name...")
+
+(link-goto: "Continue", "pet-type")
+
+:: pet-type
+What kind of pet is $petName?
+
+[[A dog->dog]]
+[[A cat->cat]]
+[[A fish->fish]]
+
+:: dog
+$petName is a great name for a dog. They'll be chasing sticks forever in your memory.
+
+[[The end->end]]
+
+:: cat
+$petName is a great name for a cat. Dignified, a little mysterious — as it should be.
+
+[[The end->end]]
+
+:: fish
+$petName is a great name for a fish. Small in size, large in legacy.
+
+[[The end->end]]
+
+:: end
+Whatever happens, $petName was lucky to have you.

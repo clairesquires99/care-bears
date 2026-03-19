@@ -1,0 +1,277 @@
+:: StoryTitle
+Leaving on Your Terms
+
+:: StoryData
+{
+  "ifid": "A1B2C3D4-E5F6-7890-ABCD-EF1234567890",
+  "format": "Harlowe",
+  "format-version": "3.3.9",
+  "start": "Start"
+}
+
+:: Start
+(set: $specialPlace to "")
+
+Alright, let's talk about the big one. No, not taxes — the //other// inevitable thing.
+
+Don't worry, we're keeping this light. Think of this less as "planning your death" and more as "designing your grand finale."
+
+So — when the time comes, what happens to your body?
+
+[[Send me back to the earth->buried]]
+[[Turn me into a cloud of smoke->cremated]]
+[[I want something more... creative->creative-burial]]
+
+:: buried
+Now, where are we putting you?
+
+[[Family plot — keep it traditional->family-plot]]
+[[Somewhere meaningful to me — a place I loved->meaningful-place]]
+[[Honestly, surprise me->surprise-burial]]
+
+:: cremated
+What should happen to your ashes?
+
+[[Scatter them somewhere beautiful->scatter]]
+[[Keep them in an urn at home->urn]]
+[[Turn them into something — a diamond, a vinyl record, a reef->ashes-transformed]]
+
+:: creative-burial
+What kind of creative are we talking?
+
+[[A green/natural burial — return to nature, no fuss->green-burial]]
+[[Launched into space ->space]]
+[[Turned into a tree via a biodegradable pod->tree-burial]]
+
+:: family-plot
+Now for the party — because yes, there's a party.
+
+[[A traditional funeral service->traditional-service]]
+[[A celebration of life — music, stories, maybe an open bar->celebration]]
+[[Something small and private, just close family->private-gathering]]
+
+:: meaningful-place
+Is there a specific place in mind? Tell us about it:
+
+(input-box: bind $specialPlace, "X", 1, "Describe the place...")
+
+(link-goto: "That sounds perfect", "meaningful-place-confirmed")
+
+:: meaningful-place-confirmed
+(if: $specialPlace is "")[What a place. Even if the words aren't quite there yet, the feeling is enough.](else:)[''$specialPlace'' — what a place to spend forever. The people who love you will know exactly where to find you.]
+
+[[Continue to the send-off->celebration]]
+
+:: surprise-burial
+The ultimate gift — no decisions for you, full creative freedom for the family. They might surprise you.
+
+Now for the send-off itself.
+
+[[A traditional funeral service->traditional-service]]
+[[A celebration of life — music, stories, maybe an open bar->celebration]]
+[[Something small and private, just close family->private-gathering]]
+
+:: scatter
+A beach, a mountain, over the ocean — ashes to the wind.
+
+Who's doing the scattering?
+
+[[The whole family together->family-scatter]]
+[[Whoever wants to come — the more the merrier->open-scatter]]
+[[One trusted person, quietly->private-scatter]]
+
+:: urn
+You'll become a permanent fixture in the living room. Choose your spot wisely.
+
+Anything else you want displayed nearby?
+
+[[A photo I love->photo-with-urn]]
+[[Nothing — just the urn, clean and simple->simple-urn]]
+
+:: ashes-transformed
+A diamond you can wear, a vinyl record of your favorite songs, a reef where fish make their home.
+
+[[A piece of jewelry — something the family can keep->ash-jewelry]]
+[[A vinyl record pressed with my favorite songs ->ash-vinyl]]
+[[A reef ball — rest under the ocean->ash-reef]]
+
+:: green-burial
+No embalming, no casket, just you and the earth. Simple, honest, and genuinely good for the planet.
+
+Where do you picture this happening?
+
+[[A dedicated natural burial ground->natural-ground]]
+[[Somewhere on family land, if possible->family-land]]
+
+:: space
+Your remains, orbiting Earth (or heading beyond). Not many people can say that.
+
+Which kind of space farewell?
+
+[[Earth orbit — circle the planet forever->earth-orbit]]
+[[Deep space — truly gone where no one has gone before->deep-space]]
+
+:: tree-burial
+A biodegradable pod, a sapling planted above you. You become the tree.
+
+What kind of tree feels right?
+
+[[An oak — strong, long-living->oak-tree]]
+[[A fruit tree — giving back, even after->fruit-tree]]
+[[Whatever grows best there — I trust nature->nature-tree]]
+
+:: traditional-service
+A proper send-off — a ceremony, a eulogy, flowers, the works.
+
+One important question: open casket or closed?
+
+[[Open->open-casket]]
+[[Closed->closed-casket]]
+[[No strong feelings either way->no-casket-pref]]
+
+:: celebration
+A party in your honor. Music, laughter, stories, a slideshow of your greatest hits.
+
+What's the vibe?
+
+[[Backyard gathering — casual, warm, comfortable->backyard-party]]
+[[Rented venue — go big, do it properly->big-venue]]
+[[Destination celebration — somewhere you loved->destination-party]]
+
+:: private-gathering
+Just the inner circle. Quiet, intimate, meaningful.
+
+Any particular setting?
+
+[[At home->at-home-gathering]]
+[[In nature somewhere->nature-gathering]]
+[[At a place that meant something to us->meaningful-gathering]]
+
+:: family-scatter
+A shared moment. Everyone together, one last time, doing something for you.
+
+[[Continue->end]]
+
+:: open-scatter
+The more the merrier — even in ashes form. We respect it.
+
+[[Continue->end]]
+
+:: private-scatter
+Simple, quiet, trusted. Sometimes that's exactly right.
+
+[[Continue->end]]
+
+:: photo-with-urn
+A good photo says more than most things. Pick a great one.
+
+[[Continue->end]]
+
+:: simple-urn
+Clean. No clutter. Just presence.
+
+[[Continue->end]]
+
+:: ash-jewelry
+A ring, a pendant, a bracelet — something tangible. Someone carries a piece of you every day.
+
+[[Continue->end]]
+
+:: ash-vinyl
+Imagine: your family puts on a record, and it's actually //you//. That's pretty special.
+
+[[Continue->end]]
+
+:: ash-reef
+An underwater memorial. Fish, coral, ocean. Honestly peaceful.
+
+[[Continue->end]]
+
+:: natural-ground
+These spots are genuinely beautiful. Often more peaceful than a traditional cemetery.
+
+[[Continue->end]]
+
+:: family-land
+If it's possible, there's something deeply rooted about staying on land your family knows.
+
+[[Continue->end]]
+
+:: earth-orbit
+Circling the planet. Every sunrise, every sunset — you're up there somewhere.
+
+[[Continue->end]]
+
+:: deep-space
+The ultimate adventure. No return trip required.
+
+[[Continue->end]]
+
+:: oak-tree
+Strong, long, steady. A good legacy tree.
+
+[[Continue->end]]
+
+:: fruit-tree
+Giving back even after. A peach tree, an apple tree — something with purpose.
+
+[[Continue->end]]
+
+:: nature-tree
+You trust the process. Nature will pick something good.
+
+[[Continue->end]]
+
+:: open-casket
+A chance for people to say a proper goodbye.
+
+[[Continue->end]]
+
+:: closed-casket
+Remember me as I was. Completely valid.
+
+[[Continue->end]]
+
+:: no-casket-pref
+Whatever feels right to the family at the time. Flexible and kind.
+
+[[Continue->end]]
+
+:: backyard-party
+Comfortable, warm, no dress code required. The best kind of gathering.
+
+[[Continue->end]]
+
+:: big-venue
+If you're going out, go out properly. Reserve the good room.
+
+[[Continue->end]]
+
+:: destination-party
+A trip in your honor. People will talk about it for years.
+
+[[Continue->end]]
+
+:: at-home-gathering
+Home is where the heart is. Fitting.
+
+[[Continue->end]]
+
+:: nature-gathering
+Fresh air, open sky. A good place to say goodbye.
+
+[[Continue->end]]
+
+:: meaningful-gathering
+A place that holds a story. That means something.
+
+[[Continue->end]]
+
+:: end
+That's a wrap on the big questions.
+
+(if: $specialPlace is not "")[You'll be at ''$specialPlace''. They'll know where to find you.
+]
+You've just given the people who love you an enormous gift — clarity, when they'll need it most.
+
+These wishes deserve to be written down somewhere they can actually be found.

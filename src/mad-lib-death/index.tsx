@@ -1,101 +1,213 @@
 "use client";
 
+import { Button } from "@/src/components/ui/Button";
+import { createClient } from "@/src/lib/supabase/client";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChoiceSegment, parseTemplate } from "./parse-template";
+import { StoryTag } from "../components/StoryTag";
+import { TweeLink, TweeStory } from "./parse-twee";
 
-const CHARS_PER_SECOND = 100;
+const CHARS_PER_SECOND = 150;
 
-type InlineItem =
-  | { type: "text"; content: string }
-  | { type: "answer"; value: string };
+// ── Rich text helpers ────────────────────────────────────────────────────────
 
-type ParagraphLine = InlineItem[];
+type RichNode = { text: string; bold?: boolean; italic?: boolean };
 
-function buildParagraphs(inlineItems: InlineItem[]): ParagraphLine[] {
-  const lines: ParagraphLine[] = [[]];
-  for (const item of inlineItems) {
-    if (item.type === "answer") {
-      lines[lines.length - 1].push(item);
-    } else {
-      const parts = item.content.split("\n");
-      parts.forEach((part, i) => {
-        if (i > 0) lines.push([]);
-        if (part) lines[lines.length - 1].push({ type: "text", content: part });
-      });
-    }
+function parseRich(text: string): RichNode[] {
+  const nodes: RichNode[] = [];
+  const regex = /\/\/([^/]+)\/\/|''([^']+)''/g;
+  let last = 0;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > last) nodes.push({ text: text.slice(last, match.index) });
+    if (match[1] !== undefined) nodes.push({ text: match[1], italic: true });
+    else nodes.push({ text: match[2], bold: true });
+    last = regex.lastIndex;
   }
-  return lines;
+  if (last < text.length) nodes.push({ text: text.slice(last) });
+  return nodes;
 }
 
-export default function MadLibDeath({ template }: { template: string }) {
-  const segments = useMemo(() => parseTemplate(template), [template]);
-  const [segIndex, setSegIndex] = useState(0);
+function sliceRich(nodes: RichNode[], charIndex: number): RichNode[] {
+  const result: RichNode[] = [];
+  let remaining = charIndex;
+  for (const node of nodes) {
+    if (remaining <= 0) break;
+    const take = Math.min(remaining, node.text.length);
+    result.push({ ...node, text: node.text.slice(0, take) });
+    remaining -= take;
+  }
+  return result;
+}
+
+type Paragraph = RichNode[];
+
+function buildParagraphs(nodes: RichNode[]): Paragraph[] {
+  const paragraphs: Paragraph[] = [[]];
+  for (const node of nodes) {
+    const parts = node.text.split("\n\n");
+    parts.forEach((part, i) => {
+      if (i > 0) paragraphs.push([]);
+      if (part) paragraphs[paragraphs.length - 1].push({ ...node, text: part });
+    });
+  }
+  return paragraphs;
+}
+
+// ── Sub-components ───────────────────────────────────────────────────────────
+
+function renderNode(node: RichNode, key: number) {
+  if (node.bold) return <strong key={key}>{node.text}</strong>;
+  if (node.italic) return <em key={key}>{node.text}</em>;
+  return <span key={key}>{node.text}</span>;
+}
+
+function FrozenPassage({
+  text,
+  choiceLabel,
+}: {
+  text: string;
+  choiceLabel: string;
+}) {
+  const paragraphs = buildParagraphs(parseRich(text));
+  return (
+    <div className="opacity-50">
+      {paragraphs.map((para, i) => {
+        const isLast = i === paragraphs.length - 1;
+        return (
+          <p key={i} className={i > 0 ? "mt-4" : ""}>
+            {para.length === 0 ? <>&nbsp;</> : para.map(renderNode)}
+            {isLast && (
+              <span className="ml-2 inline-block rounded-full border border-zinc-300 bg-zinc-100 px-2.5 py-0.5 text-sm text-zinc-700 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                {choiceLabel}
+              </span>
+            )}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Main component ───────────────────────────────────────────────────────────
+
+type HistoryEntry = { text: string; choiceLabel: string };
+
+export default function InteractiveStory({
+  story,
+  completePath,
+  conversationId,
+}: {
+  story: TweeStory;
+  completePath?: string;
+  conversationId?: string;
+}) {
+  const [variables, setVariables] = useState<Record<string, string>>({});
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [currentId, setCurrentId] = useState(story.startPassage);
   const [charIndex, setCharIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [waiting, setWaiting] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const containerRef = useRef<HTMLElement>(null);
+  const choicesRef = useRef<number[]>([]);
 
-  useEffect(() => {
-    if (waiting || segIndex >= segments.length) return;
+  const currentPassage = story.passages[currentId];
 
-    const seg = segments[segIndex];
+  // Resolve text segments up to (but not including) the first choices segment.
+  // Also extract the choices links if present.
+  const { beforeText, passageChoices } = useMemo(() => {
+    const substitute = (t: string) =>
+      t.replace(/\$(\w+)/g, (_, name) => variables[name] ?? "");
 
-    if (seg.type !== "text") {
-      setWaiting(true);
-      return;
+    const parts: string[] = [];
+    let choices: TweeLink[] | null = null;
+
+    for (const seg of currentPassage.segments) {
+      if (seg.type === "choices") {
+        choices = seg.links;
+        break;
+      } else if (seg.type === "text") {
+        parts.push(substitute(seg.content));
+      } else if (seg.type === "conditional") {
+        const varVal = variables[seg.variable] ?? "";
+        const condMet =
+          seg.condition === "empty" ? varVal === "" : varVal !== "";
+        const content = condMet ? seg.ifContent : (seg.elseContent ?? "");
+        parts.push(substitute(content));
+      }
     }
 
-    setCharIndex(0);
-    let char = 0;
+    return {
+      beforeText: parts
+        .join("")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim(),
+      passageChoices: choices,
+    };
+  }, [currentPassage, variables]);
 
-    const interval = setInterval(() => {
-      char++;
-      setCharIndex(char);
+  const richNodes = useMemo(() => parseRich(beforeText), [beforeText]);
+
+  const totalChars = useMemo(
+    () => richNodes.reduce((s, n) => s + n.text.length, 0),
+    [richNodes],
+  );
+
+  const animating = charIndex < totalChars;
+
+  // Character-by-character animation
+  useEffect(() => {
+    if (charIndex >= totalChars) return;
+    const id = setTimeout(() => {
+      setCharIndex((c) => c + 1);
       if (containerRef.current) {
         containerRef.current.scrollTop = containerRef.current.scrollHeight;
       }
-      if (char >= seg.content.length) {
-        clearInterval(interval);
-        setSegIndex((si) => si + 1);
-      }
     }, 1000 / CHARS_PER_SECOND);
+    return () => clearTimeout(id);
+  }, [charIndex, totalChars]);
 
-    return () => clearInterval(interval);
-  }, [segIndex, waiting, segments]);
+  function saveProgress(status: "in-progress" | "completed" = "in-progress") {
+    if (!conversationId) return;
+    createClient()
+      .from("conversations")
+      .update({ choices: choicesRef.current, status })
+      .eq("id", conversationId)
+      .then(() => {});
+  }
 
-  function handleChoice(value: string) {
-    setAnswers((prev) => ({ ...prev, [segIndex]: value }));
-    setWaiting(false);
-    setSegIndex((si) => si + 1);
+  function navigate(
+    choiceLabel: string,
+    target: string,
+    newVars?: Record<string, string>,
+    choiceIndex?: number,
+  ) {
+    if (choiceIndex !== undefined) {
+      choicesRef.current = [...choicesRef.current, choiceIndex];
+      saveProgress();
+    }
+    setHistory((h) => [...h, { text: beforeText, choiceLabel }]);
+    if (newVars) setVariables((v) => ({ ...v, ...newVars }));
+    setCurrentId(target);
+    setCharIndex(0);
+    setInputValue("");
   }
 
   function handleInput() {
-    if (!inputValue.trim()) return;
-    setAnswers((prev) => ({ ...prev, [segIndex]: inputValue.trim() }));
-    setInputValue("");
-    setWaiting(false);
-    setSegIndex((si) => si + 1);
+    const inp = currentPassage.input;
+    if (!inp || !inputValue.trim()) return;
+    const value = inputValue.trim();
+    navigate(value, inp.submitTarget, { [inp.variable]: value });
   }
 
-  const inlineItems: InlineItem[] = [];
-  segments.slice(0, segIndex).forEach((seg, i) => {
-    if (seg.type === "text") {
-      inlineItems.push({ type: "text", content: seg.content });
-    } else {
-      inlineItems.push({ type: "answer", value: answers[i] ?? "" });
-    }
-  });
-  if (segments[segIndex]?.type === "text") {
-    inlineItems.push({
-      type: "text",
-      content: segments[segIndex].content.slice(0, charIndex),
-    });
-  }
+  const router = useRouter();
 
-  const paragraphLines = buildParagraphs(inlineItems);
-  const currentSeg = segments[segIndex];
+  const displayNodes = animating ? sliceRich(richNodes, charIndex) : richNodes;
+  const paragraphs = buildParagraphs(displayNodes);
+  const showChoices = !animating && passageChoices !== null;
+  const showInput = !animating && !!currentPassage.input;
+  const showFinish =
+    !animating && !passageChoices && !currentPassage.input && !!completePath;
 
   return (
     <main
@@ -103,76 +215,92 @@ export default function MadLibDeath({ template }: { template: string }) {
       className="h-screen overflow-y-auto bg-white px-8 py-16 dark:bg-black"
     >
       <div className="mx-auto max-w-2xl">
-        <div className="flex flex-col gap-4 text-lg leading-8 text-zinc-800 dark:text-zinc-200">
-          {paragraphLines.map((line, i) => {
-            const isLast = i === paragraphLines.length - 1;
-            return (
-              <p key={i}>
-                {line.length === 0 ? (
-                  <>&nbsp;</>
-                ) : (
-                  line.map((item, j) =>
-                    item.type === "text" ? (
-                      <span key={j}>{item.content}</span>
-                    ) : (
-                      <span
-                        key={j}
-                        className="mx-1 inline-block rounded-full border border-zinc-300 bg-zinc-100 px-2.5 py-0.5 text-sm text-zinc-700"
+        <div className="mb-8">
+          <Button variant="muted" size="sm" onClick={() => router.back()}>
+            ✕ Quit
+          </Button>
+        </div>
+        <div className="flex flex-col gap-8 text-lg leading-8 text-zinc-800 dark:text-zinc-200">
+          {history.map((entry, i) => (
+            <FrozenPassage
+              key={i}
+              text={entry.text}
+              choiceLabel={entry.choiceLabel}
+            />
+          ))}
+
+          <div>
+            {paragraphs.map((para, i) => {
+              const isLast = i === paragraphs.length - 1;
+              return (
+                <p key={i} className={i > 0 ? "mt-4" : ""}>
+                  {para.length === 0 ? <>&nbsp;</> : para.map(renderNode)}
+                  {isLast && showChoices && (
+                    <AnimatePresence>
+                      <motion.span
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="ml-2 inline-flex flex-wrap gap-2"
                       >
-                        {item.value}
-                      </span>
-                    )
-                  )
-                )}
-                {isLast && waiting && currentSeg?.type === "choice" && (
-                  <AnimatePresence>
-                    <motion.span
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="inline-flex flex-wrap gap-2 ml-1"
-                    >
-                      {(currentSeg as ChoiceSegment).options.map((opt) => (
-                        <button
-                          key={opt}
-                          onClick={() => handleChoice(opt)}
-                          className="rounded-full border border-zinc-300 bg-zinc-100 px-4 py-1.5 text-sm text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-200"
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </motion.span>
-                  </AnimatePresence>
-                )}
-                {isLast && waiting && currentSeg?.type === "input" && (
-                  <AnimatePresence>
-                    <motion.span
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="inline-flex gap-2 ml-1"
-                    >
-                      <input
-                        autoFocus
-                        type="text"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && handleInput()}
-                        className="rounded-full border border-zinc-300 bg-zinc-50 px-4 py-1.5 text-sm text-zinc-700 outline-none placeholder:text-zinc-400 focus:border-zinc-400"
-                        placeholder="type your answer..."
-                      />
-                      <button
-                        onClick={handleInput}
-                        className="rounded-full border border-zinc-300 bg-zinc-100 px-4 py-1.5 text-sm text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-200"
+                        {passageChoices!.map((link, idx) => (
+                          <StoryTag
+                            key={link.target}
+                            onClick={() => navigate(link.label, link.target, undefined, idx)}
+                          >
+                            {link.label}
+                          </StoryTag>
+                        ))}
+                      </motion.span>
+                    </AnimatePresence>
+                  )}
+                  {isLast && showInput && (
+                    <AnimatePresence>
+                      <motion.span
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="ml-1 inline-flex gap-2"
                       >
-                        OK
-                      </button>
-                    </motion.span>
-                  </AnimatePresence>
-                )}
-              </p>
-            );
-          })}
+                        <input
+                          autoFocus
+                          type="text"
+                          value={inputValue}
+                          onChange={(e) => setInputValue(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && handleInput()}
+                          className="rounded-full border border-zinc-300 bg-zinc-50 px-4 py-1.5 text-sm text-zinc-700 outline-none placeholder:text-zinc-400 focus:border-zinc-400"
+                          placeholder={currentPassage.input!.placeholder}
+                        />
+                        <StoryTag onClick={handleInput}>
+                          {currentPassage.input!.submitLabel}
+                        </StoryTag>
+                      </motion.span>
+                    </AnimatePresence>
+                  )}
+                </p>
+              );
+            })}
+          </div>
+
+          {showFinish && (
+            <AnimatePresence>
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex justify-end"
+              >
+                <Button
+                  onClick={() => {
+                    saveProgress("completed");
+                    router.push(completePath!);
+                  }}
+                >
+                  Finish
+                </Button>
+              </motion.div>
+            </AnimatePresence>
+          )}
         </div>
       </div>
     </main>
