@@ -35,6 +35,9 @@ export async function proxy(request: NextRequest) {
   const isPublic = PUBLIC_PATHS.some((p) => path === p || path.startsWith('/parent/'))
   if (isPublic) return supabaseResponse
 
+  // Dev bypass — skip auth check locally
+  if (process.env.DEV_BYPASS_AUTH === 'true') return supabaseResponse
+
   // Protect app routes
   if (!user) {
     const url = request.nextUrl.clone()
