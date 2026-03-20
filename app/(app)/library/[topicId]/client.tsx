@@ -3,11 +3,11 @@
 import { RelationshipPicker } from "@/src/components/RelationshipPicker";
 import { Badge } from "@/src/components/ui/Badge";
 import { Button } from "@/src/components/ui/Button";
-import { StaticStoryPreview } from "@/src/mad-lib-death/StaticStoryPreview";
-import { TweeStory } from "@/src/mad-lib-death/parse-twee";
 import topicsData from "@/src/data/topics.json";
 import { createClient } from "@/src/lib/supabase/client";
 import { Relationship, Topic } from "@/src/lib/types";
+import { StaticStoryPreview } from "@/src/mad-lib-death/StaticStoryPreview";
+import { TweeStory } from "@/src/mad-lib-death/parse-twee";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -55,7 +55,9 @@ export default function TopicDetailClient({
     const supabase = createClient();
     const { data } = await supabase
       .from("conversations")
-      .select("id, status, sent_at, access_code, choices, relationships(display_name)")
+      .select(
+        "id, status, sent_at, access_code, choices, relationships(display_name)",
+      )
       .eq("topic_id", topicId)
       .neq("status", "draft")
       .order("created_at", { ascending: false });
@@ -116,7 +118,7 @@ export default function TopicDetailClient({
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       {showPicker && (
         <RelationshipPicker
           onConfirm={handleSend}
@@ -294,7 +296,29 @@ export default function TopicDetailClient({
         </div>
 
         <div className="flex-1">
-          {story && <StaticStoryPreview story={story} />}
+          {story && (
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-base">💬</span>
+                <h2
+                  className="text-sm font-semibold tracking-wide uppercase"
+                  style={{ color: "#9a8a7d" }}
+                >
+                  Conversation Preview
+                </h2>
+              </div>
+              <p className="text-sm mb-6" style={{ color: "#9a8a7d" }}>
+                Here&apos;s a preview of how this conversation will flow. Your
+                loved one will see these questions and choose their answers.
+              </p>
+              <div
+                className="rounded-2xl border p-6 sm:p-8"
+                style={{ background: "#fdfcfa", borderColor: "#e5ddd5" }}
+              >
+                <StaticStoryPreview story={story} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

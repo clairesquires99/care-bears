@@ -56,7 +56,7 @@ export function Sidebar({ userEmail }: SidebarProps) {
 
   return (
     <aside
-      className="w-60 min-h-screen flex flex-col py-6 px-4 border-r"
+      className="hidden lg:flex w-60 min-h-screen flex-col py-6 px-4 border-r"
       style={{
         background: '#ffffff',
         borderColor: '#ede6dc',

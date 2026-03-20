@@ -75,9 +75,10 @@ function getPassageText(
 function replayStory(
   story: TweeStory,
   choices: number[],
+  initialVariables: Record<string, string> = {},
 ): { history: { text: string; choiceLabel: string }[]; finalText: string } {
   let currentId = story.startPassage;
-  const variables: Record<string, string> = {};
+  const variables: Record<string, string> = { ...initialVariables };
   const history: { text: string; choiceLabel: string }[] = [];
 
   for (const choiceIndex of choices) {
@@ -102,11 +103,13 @@ function replayStory(
 export function CompletedStory({
   story,
   choices,
+  variables = {},
 }: {
   story: TweeStory;
   choices: number[];
+  variables?: Record<string, string>;
 }) {
-  const { history, finalText } = replayStory(story, choices);
+  const { history, finalText } = replayStory(story, choices, variables);
   const finalParagraphs = buildParagraphs(parseRich(finalText));
 
   return (
