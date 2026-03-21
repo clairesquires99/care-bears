@@ -2,6 +2,7 @@
 
 import { createClient } from "@/src/lib/supabase/client";
 import Image from "next/image";
+import { APP_NAME } from "@/src/lib/constants";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
@@ -53,13 +54,13 @@ function VerifyForm() {
       <div className="inline-flex items-center gap-2 mb-10">
         <Image
           src="/logo.png"
-          alt="Our Hearth"
+          alt={APP_NAME}
           width={32}
           height={32}
           className="rounded-xl object-cover"
         />
         <span className="font-semibold text-lg" style={{ color: "#1a1512" }}>
-          Our Hearth
+          {APP_NAME}
         </span>
       </div>
 

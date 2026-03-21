@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { APP_NAME } from '@/src/lib/constants'
 
 interface SidebarProps {
   userEmail?: string
@@ -57,13 +58,13 @@ export function Sidebar({ userEmail }: SidebarProps) {
       <div className="flex items-center gap-2 px-2 mb-8">
         <Image
           src="/logo.png"
-          alt="Our Hearth"
+          alt={APP_NAME}
           width={32}
           height={32}
           className="rounded-xl shrink-0 object-cover"
         />
         <span className="font-semibold text-sm" style={{ color: '#1a1512' }}>
-          Our Hearth
+          {APP_NAME}
         </span>
       </div>
 

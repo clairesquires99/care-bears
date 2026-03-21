@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { APP_NAME } from "@/src/lib/constants";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
@@ -9,7 +10,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Care Bears — Family Conversations",
+  title: `${APP_NAME} — Family Conversations`,
   description: "Guided conversations to help families discuss what matters most.",
 };
 
