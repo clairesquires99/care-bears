@@ -7,7 +7,9 @@ interface TopicCardProps {
 }
 
 const categoryColors: Record<string, { bg: string; color: string }> = {
+  "Getting to Know": { bg: "#dbeafe", color: "#1d4ed8" },
   Legacy: { bg: "#fde8c8", color: "#92400e" },
+  Medical: { bg: "#dcfce7", color: "#15803d" },
   Healthcare: { bg: "#ffe4e6", color: "#e11d48" },
   Finances: { bg: "#d1fae5", color: "#059669" },
 };
