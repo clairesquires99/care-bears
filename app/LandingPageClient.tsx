@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -83,9 +84,7 @@ export default function LandingPageClient() {
         {/* Logo */}
         <div className="mb-10 text-center">
           <div className="inline-flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ background: '#d97706' }}>
-              C
-            </div>
+            <Image src="/logo.png" alt="Our Hearth" width={32} height={32} className="rounded-xl object-cover" />
             <span className="font-semibold text-lg" style={{ color: '#1a1512' }}>Our Hearth</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight mb-3" style={{ color: '#1a1512' }}>
