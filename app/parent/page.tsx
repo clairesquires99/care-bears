@@ -8,6 +8,7 @@ import { Conversation } from '@/src/lib/types'
 import topicsData from '@/src/data/topics.json'
 import { Topic } from '@/src/lib/types'
 import { Button } from '@/src/components/ui/Button'
+import { APP_NAME } from '@/src/lib/constants'
 
 const topics = topicsData as Topic[]
 
@@ -71,7 +72,7 @@ export default function ParentPage() {
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg" style={{ background: '#d97706' }}>
                   C
                 </div>
-                <span className="font-semibold text-xl" style={{ color: '#1a1512' }}>Our Hearth</span>
+                <span className="font-semibold text-xl" style={{ color: '#1a1512' }}>{APP_NAME}</span>
               </div>
               <h1 className="text-3xl font-bold mb-3" style={{ color: '#1a1512' }}>
                 Enter your access code

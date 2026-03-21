@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/client'
 import { Button } from '@/src/components/ui/Button'
+import { APP_NAME } from '@/src/lib/constants'
 
 const QUICK_NAMES = ['Mom', 'Dad', 'Grandma', 'Grandpa', 'Partner']
 
@@ -51,7 +52,7 @@ export default function OnboardingPage() {
             <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ background: '#d97706' }}>
               C
             </div>
-            <span className="font-semibold text-lg" style={{ color: '#1a1512' }}>Our Hearth</span>
+            <span className="font-semibold text-lg" style={{ color: '#1a1512' }}>{APP_NAME}</span>
           </div>
           <h1 className="text-2xl font-bold mb-2" style={{ color: '#1a1512' }}>
             Who do you want to start a conversation with?

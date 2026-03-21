@@ -2,6 +2,7 @@
 
 import { createClient } from "@/src/lib/supabase/client";
 import Image from "next/image";
+import { APP_NAME } from "@/src/lib/constants";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -97,7 +98,7 @@ export default function LandingPageClient() {
           <div className="inline-flex items-center gap-2 mb-6">
             <Image
               src="/logo.png"
-              alt="Our Hearth"
+              alt={APP_NAME}
               width={32}
               height={32}
               className="rounded-xl object-cover"
@@ -106,7 +107,7 @@ export default function LandingPageClient() {
               className="font-semibold text-lg"
               style={{ color: "#1a1512" }}
             >
-              Our Hearth
+              {APP_NAME}
             </span>
           </div>
           <h1
