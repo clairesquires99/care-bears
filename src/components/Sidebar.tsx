@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -54,12 +55,13 @@ export function Sidebar({ userEmail }: SidebarProps) {
     >
       {/* Logo */}
       <div className="flex items-center gap-2 px-2 mb-8">
-        <div
-          className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold shrink-0"
-          style={{ background: '#d97706' }}
-        >
-          C
-        </div>
+        <Image
+          src="/logo.png"
+          alt="Our Hearth"
+          width={32}
+          height={32}
+          className="rounded-xl shrink-0 object-cover"
+        />
         <span className="font-semibold text-sm" style={{ color: '#1a1512' }}>
           Our Hearth
         </span>
