@@ -71,7 +71,7 @@ export function Sidebar({ userEmail }: SidebarProps) {
           C
         </div>
         <span className="font-semibold text-sm" style={{ color: '#1a1512' }}>
-          Care Conversations
+          Our Hearth
         </span>
       </div>
 

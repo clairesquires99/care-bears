@@ -1,4 +1,4 @@
-# Care Conversations
+# Our Hearth
 
 **Cornell Tech · Startup Studio 2026**
 

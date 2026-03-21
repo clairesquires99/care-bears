@@ -51,7 +51,7 @@ export default function OnboardingPage() {
             <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ background: '#d97706' }}>
               C
             </div>
-            <span className="font-semibold text-lg" style={{ color: '#1a1512' }}>Care Conversations</span>
+            <span className="font-semibold text-lg" style={{ color: '#1a1512' }}>Our Hearth</span>
           </div>
           <h1 className="text-2xl font-bold mb-2" style={{ color: '#1a1512' }}>
             Who do you want to start a conversation with?

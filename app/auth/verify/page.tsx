@@ -47,7 +47,7 @@ function VerifyForm() {
         <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ background: '#d97706' }}>
           C
         </div>
-        <span className="font-semibold text-lg" style={{ color: '#1a1512' }}>Care Conversations</span>
+        <span className="font-semibold text-lg" style={{ color: '#1a1512' }}>Our Hearth</span>
       </div>
 
       <div className="rounded-3xl p-10 shadow-sm" style={{ background: '#ffffff' }}>
