@@ -54,6 +54,9 @@ export default function TopicDetailClient({
     pendingRelationships: Relationship[];
     conflicts: { rel: Relationship; status: string }[];
   } | null>(null);
+  const [showComingSoon, setShowComingSoon] = useState(false);
+
+  const COMING_SOON_TOPICS = ["medical-emergency-planning", "finances-and-estate"];
 
   async function fetchPastConvs() {
     const supabase = createClient();
@@ -174,6 +177,28 @@ export default function TopicDetailClient({
           onConfirm={handleSend}
           onClose={() => setShowPicker(false)}
         />
+      )}
+
+      {showComingSoon && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(0,0,0,0.3)" }}
+        >
+          <div
+            className="w-full max-w-sm rounded-3xl p-6 shadow-xl"
+            style={{ background: "#ffffff" }}
+          >
+            <h2 className="font-bold text-lg mb-2" style={{ color: "#1a1512" }}>
+              Coming soon
+            </h2>
+            <p className="text-sm mb-5" style={{ color: "#6b5e52" }}>
+              This conversation is still being crafted. Check back soon!
+            </p>
+            <Button onClick={() => setShowComingSoon(false)} className="w-full" size="sm">
+              Got it
+            </Button>
+          </div>
+        </div>
       )}
 
       {overwriteWarning && (
@@ -311,7 +336,11 @@ export default function TopicDetailClient({
             )}
 
             <Button
-              onClick={() => setShowPicker(true)}
+              onClick={() =>
+                COMING_SOON_TOPICS.includes(topicId)
+                  ? setShowComingSoon(true)
+                  : setShowPicker(true)
+              }
               disabled={sending}
               className="w-full mb-3"
             >
@@ -413,29 +442,40 @@ export default function TopicDetailClient({
         </div>
 
         <div className="flex-1">
-          {story && (
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-base">💬</span>
-                <h2
-                  className="text-sm font-semibold tracking-wide uppercase"
-                  style={{ color: "#9a8a7d" }}
-                >
-                  Conversation Preview
-                </h2>
-              </div>
-              <p className="text-sm mb-6" style={{ color: "#9a8a7d" }}>
-                Here&apos;s a preview of how this conversation might flow. The
-                exact way the story will unfold will depend on how they answer.
-              </p>
-              <div
-                className="rounded-2xl border p-6 sm:p-8"
-                style={{ background: "#fdfcfa", borderColor: "#e5ddd5" }}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-base">💬</span>
+              <h2
+                className="text-sm font-semibold tracking-wide uppercase"
+                style={{ color: "#9a8a7d" }}
               >
-                <StaticStoryPreview story={story} />
-              </div>
+                Conversation Preview
+              </h2>
             </div>
-          )}
+            {COMING_SOON_TOPICS.includes(topicId) ? (
+              <div
+                className="rounded-2xl border p-6 sm:p-8 flex items-center justify-center"
+                style={{ background: "#fdfcfa", borderColor: "#e5ddd5", minHeight: "200px" }}
+              >
+                <p className="text-sm font-medium" style={{ color: "#9a8a7d" }}>
+                  Coming soon
+                </p>
+              </div>
+            ) : story ? (
+              <>
+                <p className="text-sm mb-6" style={{ color: "#9a8a7d" }}>
+                  Here&apos;s a preview of how this conversation might flow. The
+                  exact way the story will unfold will depend on how they answer.
+                </p>
+                <div
+                  className="rounded-2xl border p-6 sm:p-8"
+                  style={{ background: "#fdfcfa", borderColor: "#e5ddd5" }}
+                >
+                  <StaticStoryPreview story={story} />
+                </div>
+              </>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
