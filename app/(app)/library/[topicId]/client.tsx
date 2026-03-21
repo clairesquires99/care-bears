@@ -308,8 +308,8 @@ export default function TopicDetailClient({
                 </h2>
               </div>
               <p className="text-sm mb-6" style={{ color: "#9a8a7d" }}>
-                Here&apos;s a preview of how this conversation will flow. Your
-                loved one will see these questions and choose their answers.
+                Here&apos;s a preview of how this conversation might flow. The
+                exact way the story will unfold will depend on how they answer.
               </p>
               <div
                 className="rounded-2xl border p-6 sm:p-8"
