@@ -230,6 +230,7 @@ export default function LandingPageClient() {
                 <input
                   id="email-pw"
                   type="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
@@ -259,6 +260,7 @@ export default function LandingPageClient() {
                 <input
                   id="password"
                   type="password"
+                  autoComplete={passwordFlow === "signup" ? "new-password" : "current-password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
