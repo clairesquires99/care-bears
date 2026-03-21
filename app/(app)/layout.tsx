@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/src/lib/supabase/server'
 import { Sidebar } from '@/src/components/Sidebar'
+import { MobileNav } from '@/src/components/MobileNav'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -11,9 +12,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex min-h-screen" style={{ background: '#faf8f5' }}>
       <Sidebar userEmail={user.email} />
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto pb-16 lg:pb-0">
         {children}
       </main>
+      <MobileNav />
     </div>
   )
 }

@@ -86,7 +86,7 @@ export default function LandingPageClient() {
             <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ background: '#d97706' }}>
               C
             </div>
-            <span className="font-semibold text-lg" style={{ color: '#1a1512' }}>Care Conversations</span>
+            <span className="font-semibold text-lg" style={{ color: '#1a1512' }}>Our Hearth</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight mb-3" style={{ color: '#1a1512' }}>
             Have the conversations<br />that matter most

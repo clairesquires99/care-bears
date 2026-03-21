@@ -75,18 +75,33 @@ function getPassageText(
 function replayStory(
   story: TweeStory,
   choices: number[],
+  initialVariables: Record<string, string> = {},
 ): { history: { text: string; choiceLabel: string }[]; finalText: string } {
   let currentId = story.startPassage;
-  const variables: Record<string, string> = {};
+  const variables: Record<string, string> = { ...initialVariables };
   const history: { text: string; choiceLabel: string }[] = [];
+  let choiceIdx = 0;
 
-  for (const choiceIndex of choices) {
+  while (true) {
     const passage = story.passages[currentId];
     if (!passage) break;
     const { text, choices: links } = getPassageText(passage, variables);
-    if (!links || choiceIndex >= links.length) break;
-    history.push({ text, choiceLabel: links[choiceIndex].label });
-    currentId = links[choiceIndex].target;
+
+    if (passage.input) {
+      // Free-text input passage: navigate to submitTarget using the saved variable value
+      const varValue = variables[passage.input.variable] ?? "";
+      if (!varValue) break;
+      history.push({ text, choiceLabel: varValue });
+      currentId = passage.input.submitTarget;
+    } else if (links && choiceIdx < choices.length) {
+      // Choice passage: consume the next choice index
+      const choiceIndex = choices[choiceIdx++];
+      if (choiceIndex >= links.length) break;
+      history.push({ text, choiceLabel: links[choiceIndex].label });
+      currentId = links[choiceIndex].target;
+    } else {
+      break;
+    }
   }
 
   const finalPassage = story.passages[currentId];
@@ -102,11 +117,13 @@ function replayStory(
 export function CompletedStory({
   story,
   choices,
+  variables = {},
 }: {
   story: TweeStory;
   choices: number[];
+  variables?: Record<string, string>;
 }) {
-  const { history, finalText } = replayStory(story, choices);
+  const { history, finalText } = replayStory(story, choices, variables);
   const finalParagraphs = buildParagraphs(parseRich(finalText));
 
   return (

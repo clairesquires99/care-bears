@@ -71,7 +71,7 @@ export default function ParentPage() {
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg" style={{ background: '#d97706' }}>
                   C
                 </div>
-                <span className="font-semibold text-xl" style={{ color: '#1a1512' }}>Care Conversations</span>
+                <span className="font-semibold text-xl" style={{ color: '#1a1512' }}>Our Hearth</span>
               </div>
               <h1 className="text-3xl font-bold mb-3" style={{ color: '#1a1512' }}>
                 Enter your access code

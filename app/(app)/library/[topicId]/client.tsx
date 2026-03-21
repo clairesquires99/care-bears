@@ -3,11 +3,11 @@
 import { RelationshipPicker } from "@/src/components/RelationshipPicker";
 import { Badge } from "@/src/components/ui/Badge";
 import { Button } from "@/src/components/ui/Button";
-import { StaticStoryPreview } from "@/src/mad-lib-death/StaticStoryPreview";
-import { TweeStory } from "@/src/mad-lib-death/parse-twee";
 import topicsData from "@/src/data/topics.json";
 import { createClient } from "@/src/lib/supabase/client";
 import { Relationship, Topic } from "@/src/lib/types";
+import { StaticStoryPreview } from "@/src/mad-lib-death/StaticStoryPreview";
+import { TweeStory } from "@/src/mad-lib-death/parse-twee";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -50,12 +50,21 @@ export default function TopicDetailClient({
   } | null>(null);
   const [sending, setSending] = useState(false);
   const [pastConvs, setPastConvs] = useState<ConvRow[]>([]);
+  const [overwriteWarning, setOverwriteWarning] = useState<{
+    pendingRelationships: Relationship[];
+    conflicts: { rel: Relationship; status: string }[];
+  } | null>(null);
+  const [showComingSoon, setShowComingSoon] = useState(false);
+
+  const COMING_SOON_TOPICS = ["medical-emergency-planning", "finances-and-estate"];
 
   async function fetchPastConvs() {
     const supabase = createClient();
     const { data } = await supabase
       .from("conversations")
-      .select("id, status, sent_at, access_code, choices, relationships(display_name)")
+      .select(
+        "id, status, sent_at, access_code, choices, relationships(display_name)",
+      )
       .eq("topic_id", topicId)
       .neq("status", "draft")
       .order("created_at", { ascending: false });
@@ -84,7 +93,6 @@ export default function TopicDetailClient({
 
   async function handleSend(relationships: Relationship[]) {
     setShowPicker(false);
-    setSending(true);
 
     const supabase = createClient();
     const {
@@ -92,18 +100,55 @@ export default function TopicDetailClient({
     } = await supabase.auth.getUser();
     if (!user) return;
 
+    // Check for existing conversations for any of the selected relationships
+    const { data: existing } = await supabase
+      .from("conversations")
+      .select("relationship_id, status")
+      .eq("topic_id", topic!.id)
+      .eq("user_id", user.id)
+      .in(
+        "relationship_id",
+        relationships.map((r) => r.id),
+      );
+
+    const conflicts = (existing ?? [])
+      .map((row) => ({
+        rel: relationships.find((r) => r.id === row.relationship_id)!,
+        status: row.status as string,
+      }))
+      .filter((c) => c.rel != null);
+
+    if (conflicts.length > 0) {
+      setOverwriteWarning({ pendingRelationships: relationships, conflicts });
+      return;
+    }
+
+    await doSend(relationships, supabase, user.id);
+  }
+
+  async function doSend(
+    relationships: Relationship[],
+    supabase: ReturnType<typeof createClient>,
+    userId: string,
+  ) {
+    setOverwriteWarning(null);
+    setSending(true);
+
     const codes: string[] = [];
 
     for (const rel of relationships) {
       const code = generateCode();
-      await supabase.from("conversations").insert({
-        user_id: user.id,
-        relationship_id: rel.id,
-        topic_id: topic!.id,
-        status: "sent",
-        access_code: code,
-        sent_at: new Date().toISOString(),
-      });
+      await supabase.from("conversations").upsert(
+        {
+          user_id: userId,
+          relationship_id: rel.id,
+          topic_id: topic!.id,
+          status: "sent",
+          access_code: code,
+          sent_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,topic_id,relationship_id" },
+      );
       codes.push(code);
     }
 
@@ -115,13 +160,112 @@ export default function TopicDetailClient({
     fetchPastConvs();
   }
 
+  async function handleOverwriteConfirm() {
+    if (!overwriteWarning) return;
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+    await doSend(overwriteWarning.pendingRelationships, supabase, user.id);
+  }
+
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       {showPicker && (
         <RelationshipPicker
           onConfirm={handleSend}
           onClose={() => setShowPicker(false)}
         />
+      )}
+
+      {showComingSoon && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(0,0,0,0.3)" }}
+        >
+          <div
+            className="w-full max-w-sm rounded-3xl p-6 shadow-xl"
+            style={{ background: "#ffffff" }}
+          >
+            <h2 className="font-bold text-lg mb-2" style={{ color: "#1a1512" }}>
+              Coming soon
+            </h2>
+            <p className="text-sm mb-5" style={{ color: "#6b5e52" }}>
+              This conversation is still being crafted. Check back soon!
+            </p>
+            <Button onClick={() => setShowComingSoon(false)} className="w-full" size="sm">
+              Got it
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {overwriteWarning && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(0,0,0,0.3)" }}
+        >
+          <div
+            className="w-full max-w-sm rounded-3xl p-6 shadow-xl"
+            style={{ background: "#ffffff" }}
+          >
+            <h2 className="font-bold text-lg mb-1" style={{ color: "#1a1512" }}>
+              Already sent
+            </h2>
+            <p className="text-sm mb-5" style={{ color: "#6b5e52" }}>
+              You&apos;ve already sent this conversation to the following{" "}
+              {overwriteWarning.conflicts.length === 1 ? "person" : "people"}:
+            </p>
+            <div className="space-y-2 mb-5">
+              {overwriteWarning.conflicts.map(({ rel, status }) => (
+                <div
+                  key={rel.id}
+                  className="flex items-center gap-3 px-4 py-3 rounded-2xl"
+                  style={{ background: "#f6f3ef" }}
+                >
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
+                    style={{ background: "#fbd08f", color: "#92400e" }}
+                  >
+                    {rel.display_name[0]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className="font-medium text-sm"
+                      style={{ color: "#1a1512" }}
+                    >
+                      {rel.display_name}
+                    </p>
+                    <p className="text-xs" style={{ color: "#9a8a7d" }}>
+                      {statusLabel[status] ?? status}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm mb-5" style={{ color: "#6b5e52" }}>
+              Resending will generate a new code and reset the conversation. Any
+              progress will be lost.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setOverwriteWarning(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleOverwriteConfirm}
+                className="flex-1"
+                size="sm"
+              >
+                Resend
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Breadcrumb */}
@@ -192,7 +336,11 @@ export default function TopicDetailClient({
             )}
 
             <Button
-              onClick={() => setShowPicker(true)}
+              onClick={() =>
+                COMING_SOON_TOPICS.includes(topicId)
+                  ? setShowComingSoon(true)
+                  : setShowPicker(true)
+              }
               disabled={sending}
               className="w-full mb-3"
             >
@@ -294,7 +442,40 @@ export default function TopicDetailClient({
         </div>
 
         <div className="flex-1">
-          {story && <StaticStoryPreview story={story} />}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-base">💬</span>
+              <h2
+                className="text-sm font-semibold tracking-wide uppercase"
+                style={{ color: "#9a8a7d" }}
+              >
+                Conversation Preview
+              </h2>
+            </div>
+            {COMING_SOON_TOPICS.includes(topicId) ? (
+              <div
+                className="rounded-2xl border p-6 sm:p-8 flex items-center justify-center"
+                style={{ background: "#fdfcfa", borderColor: "#e5ddd5", minHeight: "200px" }}
+              >
+                <p className="text-sm font-medium" style={{ color: "#9a8a7d" }}>
+                  Coming soon
+                </p>
+              </div>
+            ) : story ? (
+              <>
+                <p className="text-sm mb-6" style={{ color: "#9a8a7d" }}>
+                  Here&apos;s a preview of how this conversation might flow. The
+                  exact way the story will unfold will depend on how they answer.
+                </p>
+                <div
+                  className="rounded-2xl border p-6 sm:p-8"
+                  style={{ background: "#fdfcfa", borderColor: "#e5ddd5" }}
+                >
+                  <StaticStoryPreview story={story} />
+                </div>
+              </>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

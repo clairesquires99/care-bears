@@ -26,7 +26,7 @@ export default function CompletePage() {
             Want to start your own conversations?
           </p>
           <p className="text-sm mb-4" style={{ color: '#9a8a7d' }}>
-            Care Conversations helps families have these important discussions.
+            Our Hearth helps families have these important discussions.
           </p>
           <Button href="/">
             Learn more →

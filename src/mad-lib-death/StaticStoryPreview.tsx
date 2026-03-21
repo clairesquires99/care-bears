@@ -2,17 +2,23 @@ import { TweeStory } from "./parse-twee";
 
 // ── Rich text helpers ─────────────────────────────────────────────────────────
 
-type RichNode = { text: string; bold?: boolean; italic?: boolean };
+type RichNode = {
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+  variable?: boolean;
+};
 
 function parseRich(text: string): RichNode[] {
   const nodes: RichNode[] = [];
-  const regex = /\/\/([^/]+)\/\/|''([^']+)''/g;
+  const regex = /\/\/([^/]+)\/\/|''([^']+)''|\$([A-Za-z]\w*)/g;
   let last = 0;
   let match: RegExpExecArray | null;
   while ((match = regex.exec(text)) !== null) {
     if (match.index > last) nodes.push({ text: text.slice(last, match.index) });
     if (match[1] !== undefined) nodes.push({ text: match[1], italic: true });
-    else nodes.push({ text: match[2], bold: true });
+    else if (match[2] !== undefined) nodes.push({ text: match[2], bold: true });
+    else nodes.push({ text: "fill-in-the-blank", variable: true });
     last = regex.lastIndex;
   }
   if (last < text.length) nodes.push({ text: text.slice(last) });
@@ -31,10 +37,18 @@ function buildParagraphs(nodes: RichNode[]): RichNode[][] {
   return paragraphs;
 }
 
+const VAR_RE = /\$[A-Za-z]\w*/g;
+const FILL = "fill-in-the-blank";
+
+function resolveVars(text: string) {
+  return text.replace(VAR_RE, FILL);
+}
+
 function renderNode(node: RichNode, key: number) {
-  if (node.bold) return <strong key={key}>{node.text}</strong>;
-  if (node.italic) return <em key={key}>{node.text}</em>;
-  return <span key={key}>{node.text}</span>;
+  if (node.variable) return <strong key={key}>{FILL}</strong>;
+  if (node.bold) return <strong key={key}>{resolveVars(node.text)}</strong>;
+  if (node.italic) return <em key={key}>{resolveVars(node.text)}</em>;
+  return <span key={key}>{resolveVars(node.text)}</span>;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -70,7 +84,10 @@ function buildSteps(story: TweeStory): Step[] {
       }
     }
 
-    const text = parts.join("").replace(/\n{3,}/g, "\n\n").trim();
+    const text = parts
+      .join("")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
     steps.push({ text, choices, inputPlaceholder: passage.input?.placeholder });
 
     if (choices && choices.length > 0) {
@@ -93,32 +110,34 @@ export function StaticStoryPreview({ story }: { story: TweeStory }) {
       {steps.map((step, i) => {
         const paragraphs = buildParagraphs(parseRich(step.text));
         return (
-          <div key={i} className="opacity-60">
+          <div key={i} className="opacity-70">
             {paragraphs.map((para, j) => {
               const isLast = j === paragraphs.length - 1;
               return (
                 <p key={j} className={j > 0 ? "mt-4" : ""}>
                   {para.length === 0 ? <>&nbsp;</> : para.map(renderNode)}
-                  {isLast && step.choices && (
-                    <span className="ml-2 inline-flex flex-wrap gap-2">
-                      {step.choices.map((link) => (
-                        <span
-                          key={link.target}
-                          className="inline-block rounded-full border border-zinc-300 bg-zinc-100 px-2.5 py-0.5 text-sm text-zinc-600"
-                        >
-                          {link.label}
-                        </span>
-                      ))}
-                    </span>
-                  )}
-                  {isLast && step.inputPlaceholder && (
-                    <span className="ml-2 inline-block rounded-full border border-zinc-300 bg-zinc-100 px-2.5 py-0.5 text-sm text-zinc-400 italic">
-                      {step.inputPlaceholder}
-                    </span>
-                  )}
                 </p>
               );
             })}
+            {step.choices && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {step.choices.map((link) => (
+                  <span
+                    key={link.target}
+                    className="inline-block rounded-full border border-zinc-300 bg-white px-3 py-1 text-sm text-zinc-600"
+                  >
+                    {link.label}
+                  </span>
+                ))}
+              </div>
+            )}
+            {step.inputPlaceholder && (
+              <div className="mt-3">
+                <span className="inline-block rounded-full border border-zinc-300 bg-white px-3 py-1 text-sm text-zinc-400 italic">
+                  {step.inputPlaceholder}
+                </span>
+              </div>
+            )}
           </div>
         );
       })}

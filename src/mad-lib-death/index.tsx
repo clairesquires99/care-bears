@@ -110,6 +110,7 @@ export default function InteractiveStory({
   const [inputValue, setInputValue] = useState("");
   const containerRef = useRef<HTMLElement>(null);
   const choicesRef = useRef<number[]>([]);
+  const variablesRef = useRef<Record<string, string>>({});
 
   const currentPassage = story.passages[currentId];
 
@@ -171,7 +172,7 @@ export default function InteractiveStory({
     if (!conversationId) return;
     createClient()
       .from("conversations")
-      .update({ choices: choicesRef.current, status })
+      .update({ choices: choicesRef.current, variables: variablesRef.current, status })
       .eq("id", conversationId)
       .then(() => {});
   }
@@ -184,6 +185,10 @@ export default function InteractiveStory({
   ) {
     if (choiceIndex !== undefined) {
       choicesRef.current = [...choicesRef.current, choiceIndex];
+      saveProgress();
+    }
+    if (newVars) {
+      variablesRef.current = { ...variablesRef.current, ...newVars };
       saveProgress();
     }
     setHistory((h) => [...h, { text: beforeText, choiceLabel }]);
