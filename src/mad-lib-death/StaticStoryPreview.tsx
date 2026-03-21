@@ -106,7 +106,7 @@ export function StaticStoryPreview({ story }: { story: TweeStory }) {
   const steps = buildSteps(story);
 
   return (
-    <div className="flex flex-col gap-8 text-lg leading-8 text-zinc-800 dark:text-zinc-200">
+    <div className="flex flex-col gap-8 text-lg leading-8 text-zinc-800">
       {steps.map((step, i) => {
         const paragraphs = buildParagraphs(parseRich(step.text));
         return (
