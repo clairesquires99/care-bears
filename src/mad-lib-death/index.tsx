@@ -184,14 +184,13 @@ export default function InteractiveStory({
     newVars?: Record<string, string>,
     choiceIndex?: number,
   ) {
-    if (choiceIndex !== undefined) {
-      choicesRef.current = [...choicesRef.current, choiceIndex];
-      saveProgress();
-    }
     if (newVars) {
       variablesRef.current = { ...variablesRef.current, ...newVars };
-      saveProgress();
     }
+    if (choiceIndex !== undefined) {
+      choicesRef.current = [...choicesRef.current, choiceIndex];
+    }
+    saveProgress();
     setHistory((h) => [...h, { text: beforeText, choiceLabel }]);
     if (newVars) setVariables((v) => ({ ...v, ...newVars }));
     setCurrentId(target);
@@ -206,6 +205,7 @@ export default function InteractiveStory({
     setCharIndex(0);
     setInputValue("");
     choicesRef.current = [];
+    variablesRef.current = {};
     setConfirmRedo(false);
   }
 
