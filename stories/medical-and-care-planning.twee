@@ -1,0 +1,131 @@
+:: StoryTitle
+Medical & Care Planning
+
+
+:: StoryData
+{
+  "ifid": "FD63C1F0-B0C4-4F27-B954-2C6A8C70E2A4",
+  "format": "Harlowe",
+  "format-version": "3.3.9",
+  "start": "Start"
+}
+
+
+:: Start
+(set: $emergencyContact to "")
+(set: $healthPicture to "")
+(set: $careHelp to "")
+(set: $poaStatus to "")
+(set: $poaPerson to "")
+(set: $dnrStatus to "")
+(set: $dnrWhere to "")
+(set: $organDonorStatus to "")
+
+If something goes badly sideways, I do not want the people I love left guessing about the first call to make. The person to reach — name, relationship, and best number — is:
+(input-box: bind $emergencyContact, "X", 1, "e.g. Sarah, my daughter, 07700 900123 — if no answer, try James on 07700 900456")
+
+[[As for my health...->health-picture]]
+
+
+:: health-picture
+There are things about my health that matter in a crisis, and things that just help someone care for me well day to day. The current picture — conditions, medications, allergies, and where the full list lives — is:
+(input-box: bind $healthPicture, "X", 1, "e.g. type 2 diabetes, blood thinners — full list in the Health app or with my GP")
+
+[[When I am not well...->care-help]]
+
+
+:: care-help
+Love helps most when it knows what to do. The signs to notice and the things that actually help me are:
+(input-box: bind $careHelp, "X", 1, "e.g. what changes first, what comforts me, what to avoid")
+
+[[On the paperwork side...->poa-choice]]
+
+
+:: poa-choice
+There are a few decisions that feel cold on paper but loving in real life. One of them is who can speak for me if I cannot speak for myself. As for a power of attorney, I have [[put one in place->poa-yes]] [[not done that yet->poa-not-yet]] [[not fully sorted that out->poa-unsure]].
+
+
+:: poa-yes
+(set: $poaStatus to "put a power of attorney in place")
+
+That was not an easy box to tick, but I am glad the decision exists outside my own head now. The person I named is:
+(input-box: bind $poaPerson, "X", 1, "e.g. name and relationship")
+
+[[One more document...->dnr-choice]]
+
+
+:: poa-not-yet
+(set: $poaStatus to "not put a power of attorney in place yet")
+(set: $poaPerson to "")
+
+I am not pretending that means it does not matter. It only means some tasks take longer to face than they should. As for a DNR, I have [[one in place->dnr-yes]] [[not made one->dnr-no]] [[been thinking about it but not landed yet->dnr-thinking]].
+
+
+:: poa-unsure
+(set: $poaStatus to "not fully sorted out whether my power of attorney paperwork is complete")
+(set: $poaPerson to "")
+
+Some decisions live in that uncomfortable middle ground between intention and certainty. I would rather say that plainly than sound more organised than I feel. As for a DNR, I have [[one in place->dnr-yes]] [[not made one->dnr-no]] [[been thinking about it but not landed yet->dnr-thinking]].
+
+
+:: dnr-choice
+Another question people often avoid until the worst possible moment is what kind of intervention I would want near the end of a crisis. As for a DNR, I have [[one in place->dnr-yes]] [[not made one->dnr-no]] [[been thinking about it but not landed yet->dnr-thinking]].
+
+
+:: dnr-yes
+(set: $dnrStatus to "have a DNR in place")
+
+If someone needed to find it quickly, I would want them to know where to look. That information is:
+(input-box: bind $dnrWhere, "X", 1, "e.g. where the form is kept, who has it, or what I want honoured")
+
+[[And as for donation...->organ-donor]]
+
+
+:: dnr-no
+(set: $dnrStatus to "do not have a DNR in place")
+(set: $dnrWhere to "")
+
+For now, that is where things stand. It may change. On organ donation, I would say [[yes, I am a donor->organ-yes]] [[no, I am not->organ-no]] [[I am not sure anymore->organ-unsure]].
+
+
+:: dnr-thinking
+(set: $dnrStatus to "am still thinking through whether I want a DNR")
+(set: $dnrWhere to "")
+
+I am not avoiding the question so much as living inside it for a while. On organ donation, I would say [[yes, I am a donor->organ-yes]] [[no, I am not->organ-no]] [[I am not sure anymore->organ-unsure]].
+
+
+:: organ-donor
+One last thing that can matter a great deal. On organ donation, I would say [[yes, I am a donor->organ-yes]] [[no, I am not->organ-no]] [[I am not sure anymore->organ-unsure]].
+
+
+:: organ-yes
+(set: $organDonorStatus to "I am an organ donor")
+
+It matters to me that this is clear, even if the topic is not light.
+
+[[What I need you to know...->end]]
+
+
+:: organ-no
+(set: $organDonorStatus to "I am not an organ donor")
+
+It matters to me that this is clear, even if the topic is not light.
+
+[[What I need you to know...->end]]
+
+
+:: organ-unsure
+(set: $organDonorStatus to "I am not fully sure what I want around organ donation")
+
+It matters to me that this is clear, even if the answer is still unfinished.
+
+[[What I need you to know...->end]]
+
+
+:: end
+If something urgent happens, I would want $emergencyContact reached first.
+
+The current health picture: $healthPicture. When I am not well, the best care usually starts with noticing $careHelp.
+
+On the paperwork side, I have $poaStatus.(if: $poaPerson is not "")[ The person I named is $poaPerson.](else:)[] As for a DNR, I $dnrStatus.(if: $dnrWhere is not "")[ The information that matters most is: $dnrWhere.](else:)[] $organDonorStatus. I am writing this down so the people around me have what they need before they need it.

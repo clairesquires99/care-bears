@@ -108,6 +108,7 @@ export default function InteractiveStory({
   const [currentId, setCurrentId] = useState(story.startPassage);
   const [charIndex, setCharIndex] = useState(0);
   const [inputValue, setInputValue] = useState("");
+  const [confirmRedo, setConfirmRedo] = useState(false);
   const containerRef = useRef<HTMLElement>(null);
   const choicesRef = useRef<number[]>([]);
   const variablesRef = useRef<Record<string, string>>({});
@@ -183,19 +184,29 @@ export default function InteractiveStory({
     newVars?: Record<string, string>,
     choiceIndex?: number,
   ) {
-    if (choiceIndex !== undefined) {
-      choicesRef.current = [...choicesRef.current, choiceIndex];
-      saveProgress();
-    }
     if (newVars) {
       variablesRef.current = { ...variablesRef.current, ...newVars };
-      saveProgress();
     }
+    if (choiceIndex !== undefined) {
+      choicesRef.current = [...choicesRef.current, choiceIndex];
+    }
+    saveProgress();
     setHistory((h) => [...h, { text: beforeText, choiceLabel }]);
     if (newVars) setVariables((v) => ({ ...v, ...newVars }));
     setCurrentId(target);
     setCharIndex(0);
     setInputValue("");
+  }
+
+  function handleRedo() {
+    setVariables({});
+    setHistory([]);
+    setCurrentId(story.startPassage);
+    setCharIndex(0);
+    setInputValue("");
+    choicesRef.current = [];
+    variablesRef.current = {};
+    setConfirmRedo(false);
   }
 
   function handleInput() {
@@ -217,7 +228,8 @@ export default function InteractiveStory({
   return (
     <main
       ref={containerRef}
-      className="h-screen overflow-y-auto bg-white px-8 py-16 dark:bg-black"
+      className="h-screen overflow-y-auto px-8 py-16"
+      style={{ background: '#fef8f0' }}
     >
       <div className="mx-auto max-w-2xl">
         <div className="mb-8">
@@ -225,7 +237,7 @@ export default function InteractiveStory({
             ✕ Quit
           </Button>
         </div>
-        <div className="flex flex-col gap-8 text-lg leading-8 text-zinc-800 dark:text-zinc-200">
+        <div className="flex flex-col gap-8 text-lg leading-8 text-zinc-800">
           {history.map((entry, i) => (
             <FrozenPassage
               key={i}
@@ -234,77 +246,114 @@ export default function InteractiveStory({
             />
           ))}
 
-          <div>
-            {paragraphs.map((para, i) => {
-              const isLast = i === paragraphs.length - 1;
-              return (
+          {!passageChoices && !currentPassage.input && !!completePath ? (
+            <div
+              className="rounded-3xl p-6 mt-2"
+              style={{ background: '#ffffff', border: '1px solid #fde8c8' }}
+            >
+              <p className="text-xs font-semibold uppercase tracking-wide mb-4" style={{ color: '#d97706' }}>
+                Your story
+              </p>
+              {paragraphs.map((para, i) => (
                 <p key={i} className={i > 0 ? "mt-4" : ""}>
                   {para.length === 0 ? <>&nbsp;</> : para.map(renderNode)}
-                  {isLast && showChoices && (
-                    <AnimatePresence>
-                      <motion.span
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="ml-2 inline-flex flex-wrap gap-2"
-                      >
-                        {passageChoices!.map((link, idx) => (
-                          <StoryTag
-                            key={link.target}
-                            onClick={() => navigate(link.label, link.target, undefined, idx)}
-                          >
-                            {link.label}
-                          </StoryTag>
-                        ))}
-                      </motion.span>
-                    </AnimatePresence>
-                  )}
-                  {isLast && showInput && (
-                    <AnimatePresence>
-                      <motion.span
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="ml-1 inline-flex gap-2"
-                      >
-                        <input
-                          autoFocus
-                          type="text"
-                          value={inputValue}
-                          onChange={(e) => setInputValue(e.target.value)}
-                          onKeyDown={(e) => e.key === "Enter" && handleInput()}
-                          className="rounded-full border border-zinc-300 bg-zinc-50 px-4 py-1.5 text-sm text-zinc-700 outline-none placeholder:text-zinc-400 focus:border-zinc-400"
-                          placeholder={currentPassage.input!.placeholder}
-                        />
-                        <StoryTag onClick={handleInput}>
-                          {currentPassage.input!.submitLabel}
-                        </StoryTag>
-                      </motion.span>
-                    </AnimatePresence>
-                  )}
                 </p>
-              );
-            })}
-          </div>
-
-          {showFinish && (
-            <AnimatePresence>
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="flex justify-end"
-              >
-                <Button
-                  onClick={() => {
-                    saveProgress("completed");
-                    router.push(completePath!);
-                  }}
+              ))}
+              {showFinish && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-6 flex justify-between items-center"
                 >
-                  Finish
-                </Button>
-              </motion.div>
-            </AnimatePresence>
+                  {confirmRedo ? (
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-red-500">Erase answers and restart?</span>
+                      <button
+                        onClick={handleRedo}
+                        className="text-sm font-semibold text-red-600 hover:text-red-700 transition-colors"
+                      >
+                        Yes, start over
+                      </button>
+                      <button
+                        onClick={() => setConfirmRedo(false)}
+                        className="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmRedo(true)}
+                      className="text-sm font-medium text-red-400 hover:text-red-600 transition-colors"
+                    >
+                      ↩ Start over
+                    </button>
+                  )}
+
+                  {!confirmRedo && (
+                    <Button
+                      onClick={() => {
+                        saveProgress("completed");
+                        router.push(completePath!);
+                      }}
+                    >
+                      Finish →
+                    </Button>
+                  )}
+                </motion.div>
+              )}
+            </div>
+          ) : (
+            <div>
+              {paragraphs.map((para, i) => {
+                const isLast = i === paragraphs.length - 1;
+                return (
+                  <p key={i} className={i > 0 ? "mt-4" : ""}>
+                    {para.length === 0 ? <>&nbsp;</> : para.map(renderNode)}
+                    {isLast && showChoices && (
+                      <AnimatePresence>
+                        <motion.span
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0 }}
+                          className="ml-2 inline-flex flex-wrap gap-2"
+                        >
+                          {passageChoices!.map((link, idx) => (
+                            <StoryTag
+                              key={link.target}
+                              onClick={() => navigate(link.label, link.target, undefined, idx)}
+                            >
+                              {link.label}
+                            </StoryTag>
+                          ))}
+                        </motion.span>
+                      </AnimatePresence>
+                    )}
+                    {isLast && showInput && (
+                      <AnimatePresence>
+                        <motion.span
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0 }}
+                          className="ml-1 inline-flex gap-2"
+                        >
+                          <input
+                            autoFocus
+                            type="text"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && handleInput()}
+                            className="rounded-full border border-zinc-300 bg-zinc-50 px-4 py-1.5 text-sm text-zinc-700 outline-none placeholder:text-zinc-400 focus:border-zinc-400"
+                            placeholder={currentPassage.input!.placeholder}
+                          />
+                          <StoryTag onClick={handleInput}>→</StoryTag>
+                        </motion.span>
+                      </AnimatePresence>
+                    )}
+                  </p>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>

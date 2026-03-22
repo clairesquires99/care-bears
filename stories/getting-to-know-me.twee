@@ -1,0 +1,76 @@
+:: StoryTitle
+Getting to Know Me
+
+
+:: StoryData
+{
+  "ifid": "4D4A1C02-6A86-4D1D-9F62-5D2BDB1F5D11",
+  "format": "Harlowe",
+  "format-version": "3.3.9",
+  "start": "Start"
+}
+
+
+:: Start
+(set: $animalSelf to "")
+(set: $childhoodMemory to "")
+(set: $beforeParentSelf to "")
+(set: $storyToKeep to "")
+(set: $goodDay to "")
+(set: $heavyThought to "")
+(set: $hopeForMe to "")
+
+People know me in certain roles, but a life is always bigger than the part it played in the family. Sometimes the quickest way to say something true is sideways. If I had to describe myself as an animal, I would be:
+(input-box: bind $animalSelf, "X", 1, "e.g. a fox, a horse, a sea turtle, a housecat...")
+
+[[That takes me back...->childhood-memory]]
+
+
+:: childhood-memory
+There are whole versions of me that existed before anyone called me Mom or Dad, and some of them still make me laugh. One memory from childhood that still feels especially funny, vivid, or telling is:
+(input-box: bind $childhoodMemory, "X", 1, "e.g. a prank, a family trip, a troublemaking moment...")
+
+[[Before I was your parent...->before-parent]]
+
+
+:: before-parent
+I sometimes wonder what you would make of me if you had met me younger, before the routines and responsibilities settled in. Something about me from those years that I wish you could have seen for yourself is:
+(input-box: bind $beforeParentSelf, "X", 1, "e.g. what I was like, what I cared about, what I was chasing...")
+
+[[One story worth keeping...->story-to-keep]]
+
+
+:: story-to-keep
+Families lose things quietly. A phrase disappears, a habit fades, and one day no one remembers where a story began. A family story or piece of my life I never want lost is:
+(input-box: bind $storyToKeep, "X", 1, "e.g. how we got here, something our family survived, a story people should retell...")
+
+[[As for these days...->good-day]]
+
+
+:: good-day
+Not everything meaningful has to be dramatic. A lot of a life is hidden in the shape of an ordinary good day. These days, what makes me feel most like myself is:
+(input-box: bind $goodDay, "X", 1, "e.g. coffee on the porch, cooking, walking, hearing from you...")
+
+[[Something quieter...->heavy-thought]]
+
+
+:: heavy-thought
+I do not think every conversation needs to head straight for the hardest thing in the room. But there are thoughts that grow a little louder with age, and they deserve some daylight too. One thing that sits heavier on my mind these days is:
+(input-box: bind $heavyThought, "X", 1, "e.g. time, loneliness, health, being understood, unfinished things...")
+
+[[And one last thing...->hope-for-me]]
+
+
+:: hope-for-me
+If I am honest, there are still things I hope you will ask me, or understand about me, or remember long after the practical details have faded. The thing I most hope for is:
+(input-box: bind $hopeForMe, "X", 1, "e.g. ask me more, know what mattered to me, remember me with gentleness...")
+
+[[What I wanted you to know...->end]]
+
+
+:: end
+If you ever wonder how to picture me, you could do worse than starting with $animalSelf. Somewhere in me there is still the person from that childhood memory of $childhoodMemory, and still the version of me from before parenthood: $beforeParentSelf.
+
+I hope the story about $storyToKeep stays in the family, because it holds more than facts. It carries something of where I came from and how I learned to be myself. These days, a good day for me still looks like $goodDay, even while one thing that sits heavier on my mind is $heavyThought.
+
+More than anything, I hope you carry this forward: $hopeForMe. If this leaves you wanting to ask me another question, or tell me something back, then it has done exactly what I hoped it would.

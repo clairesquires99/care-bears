@@ -14,6 +14,14 @@ import { useEffect, useState } from "react";
 
 const topics = topicsData as Topic[];
 
+const categoryColors: Record<string, { bg: string; color: string }> = {
+  "Getting to Know": { bg: "#dbeafe", color: "#1d4ed8" },
+  Legacy: { bg: "#fde8c8", color: "#92400e" },
+  Medical: { bg: "#dcfce7", color: "#15803d" },
+  Healthcare: { bg: "#ffe4e6", color: "#e11d48" },
+  Finances: { bg: "#d1fae5", color: "#059669" },
+};
+
 type ConvRow = {
   id: string;
   status: string;
@@ -42,6 +50,9 @@ export default function TopicDetailClient({
 }) {
   const topic = topics.find((t) => t.id === topicId);
   const router = useRouter();
+  const categoryColor = topic
+    ? categoryColors[topic.category] ?? { bg: "#f6f3ef", color: "#6b5e52" }
+    : { bg: "#f6f3ef", color: "#6b5e52" };
 
   const [showPicker, setShowPicker] = useState(false);
   const [sentCode, setSentCode] = useState<{
@@ -286,8 +297,8 @@ export default function TopicDetailClient({
             <span
               className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mb-4"
               style={{
-                background: "#fde8c8",
-                color: "#92400e",
+                background: categoryColor.bg,
+                color: categoryColor.color,
               }}
             >
               {topic.category}
