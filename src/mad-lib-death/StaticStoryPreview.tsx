@@ -87,6 +87,7 @@ function buildSteps(story: TweeStory): Step[] {
     const text = parts
       .join("")
       .replace(/\n{3,}/g, "\n\n")
+      .replace(/\$\w+/g, "____")
       .trim();
     steps.push({ text, choices, inputPlaceholder: passage.input?.placeholder });
 

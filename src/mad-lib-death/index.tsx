@@ -276,9 +276,7 @@ export default function InteractiveStory({
                           className="rounded-full border border-zinc-300 bg-zinc-50 px-4 py-1.5 text-sm text-zinc-700 outline-none placeholder:text-zinc-400 focus:border-zinc-400"
                           placeholder={currentPassage.input!.placeholder}
                         />
-                        <StoryTag onClick={handleInput}>
-                          {currentPassage.input!.submitLabel}
-                        </StoryTag>
+                        <StoryTag onClick={handleInput}>→</StoryTag>
                       </motion.span>
                     </AnimatePresence>
                   )}
