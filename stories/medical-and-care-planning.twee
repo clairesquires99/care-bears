@@ -12,11 +12,8 @@ Medical & Care Planning
 
 
 :: Start
-(set: $emergencyFirst to "")
-(set: $emergencyBackup to "")
-(set: $healthIssues to "")
-(set: $medsWhere to "")
-(set: $familyConditions to "")
+(set: $emergencyContact to "")
+(set: $healthPicture to "")
 (set: $careHelp to "")
 (set: $poaStatus to "")
 (set: $poaPerson to "")
@@ -24,45 +21,24 @@ Medical & Care Planning
 (set: $dnrWhere to "")
 (set: $organDonorStatus to "")
 
-If something goes badly sideways for me, I do not want the people I love left guessing about the first call to make. The person I would want contacted first in an emergency is:
-(input-box: bind $emergencyFirst, "X", 1, "e.g. name, relationship, and best number")
+If something goes badly sideways, I do not want the people I love left guessing about the first call to make. The person to reach — name, relationship, and best number — is:
+(input-box: bind $emergencyContact, "X", 1, "e.g. Sarah, my daughter, 07700 900123 — if no answer, try James on 07700 900456")
 
-[[If they cannot be reached...->emergency-backup]]
-
-
-:: emergency-backup
-It is kinder to have a second plan than to assume the first one will always work. If that first person cannot be reached, the next person to try is:
-(input-box: bind $emergencyBackup, "X", 1, "e.g. name, relationship, and best number")
-
-[[As for my health...->health-issues]]
+[[As for my health...->health-picture]]
 
 
-:: health-issues
-Bodies collect stories whether we invite them to or not. The health issues I am living with these days are:
-(input-box: bind $healthIssues, "X", 1, "e.g. diagnoses, chronic issues, or the main things to know")
-
-[[The practical list...->meds-where]]
-
-
-:: meds-where
-The smallest details can become the most urgent ones when someone is trying to help. The most up-to-date list of my medicines, allergies, doctors, and pharmacy lives:
-(input-box: bind $medsWhere, "X", 1, "e.g. in my phone, on the fridge, in a folder, with my wallet...")
-
-[[What runs in the family...->family-conditions]]
-
-
-:: family-conditions
-Some things belong to me alone, and some belong to the family story whether we like it or not. The conditions that run in our family, or that I worry may catch up with me, are:
-(input-box: bind $familyConditions, "X", 1, "e.g. heart disease, diabetes, dementia, cancer, or what I watch for")
+:: health-picture
+There are things about my health that matter in a crisis, and things that just help someone care for me well day to day. The current picture — conditions, medications, allergies, and where the full list lives — is:
+(input-box: bind $healthPicture, "X", 1, "e.g. type 2 diabetes, blood thinners — full list in the Health app or with my GP")
 
 [[When I am not well...->care-help]]
 
 
 :: care-help
-When someone is unwell, love helps most when it knows what to do. The signs to notice and the ways to help me best are:
-(input-box: bind $careHelp, "X", 1, "e.g. what changes first, what comforts me, what makes things worse")
+Love helps most when it knows what to do. The signs to notice and the things that actually help me are:
+(input-box: bind $careHelp, "X", 1, "e.g. what changes first, what comforts me, what to avoid")
 
-[[On paperwork...->poa-choice]]
+[[On the paperwork side...->poa-choice]]
 
 
 :: poa-choice
@@ -82,14 +58,14 @@ That was not an easy box to tick, but I am glad the decision exists outside my o
 (set: $poaStatus to "not put a power of attorney in place yet")
 (set: $poaPerson to "")
 
-I am not pretending that means it does not matter. It only means life is still life, and some tasks take longer to face than they should. As for a DNR, I have [[one in place->dnr-yes]] [[not made one->dnr-no]] [[been thinking about it but not landed yet->dnr-thinking]].
+I am not pretending that means it does not matter. It only means some tasks take longer to face than they should. As for a DNR, I have [[one in place->dnr-yes]] [[not made one->dnr-no]] [[been thinking about it but not landed yet->dnr-thinking]].
 
 
 :: poa-unsure
 (set: $poaStatus to "not fully sorted out whether my power of attorney paperwork is complete")
 (set: $poaPerson to "")
 
-Some decisions live in that uncomfortable middle ground between intention and certainty. I would rather say that plainly than sound more organized than I feel. As for a DNR, I have [[one in place->dnr-yes]] [[not made one->dnr-no]] [[been thinking about it but not landed yet->dnr-thinking]].
+Some decisions live in that uncomfortable middle ground between intention and certainty. I would rather say that plainly than sound more organised than I feel. As for a DNR, I have [[one in place->dnr-yes]] [[not made one->dnr-no]] [[been thinking about it but not landed yet->dnr-thinking]].
 
 
 :: dnr-choice
@@ -99,8 +75,8 @@ Another question people often avoid until the worst possible moment is what kind
 :: dnr-yes
 (set: $dnrStatus to "have a DNR in place")
 
-If someone needed to find it quickly, I would want them to know where to look or what instruction matters most. That information is:
-(input-box: bind $dnrWhere, "X", 1, "e.g. where the form is kept, who has it, or what I want honored")
+If someone needed to find it quickly, I would want them to know where to look. That information is:
+(input-box: bind $dnrWhere, "X", 1, "e.g. where the form is kept, who has it, or what I want honoured")
 
 [[And as for donation...->organ-donor]]
 
@@ -109,24 +85,24 @@ If someone needed to find it quickly, I would want them to know where to look or
 (set: $dnrStatus to "do not have a DNR in place")
 (set: $dnrWhere to "")
 
-For now, that is where things stand. It may change, but I would rather leave an honest answer than a polished one. On organ donation, I would say [[yes, I am a donor->organ-yes]] [[no, I am not->organ-no]] [[I am not sure anymore->organ-unsure]].
+For now, that is where things stand. It may change. On organ donation, I would say [[yes, I am a donor->organ-yes]] [[no, I am not->organ-no]] [[I am not sure anymore->organ-unsure]].
 
 
 :: dnr-thinking
 (set: $dnrStatus to "am still thinking through whether I want a DNR")
 (set: $dnrWhere to "")
 
-I am not avoiding the question so much as living inside it for a while. Some choices need more than one pass before they feel true. On organ donation, I would say [[yes, I am a donor->organ-yes]] [[no, I am not->organ-no]] [[I am not sure anymore->organ-unsure]].
+I am not avoiding the question so much as living inside it for a while. On organ donation, I would say [[yes, I am a donor->organ-yes]] [[no, I am not->organ-no]] [[I am not sure anymore->organ-unsure]].
 
 
 :: organ-donor
-One last medical detail can matter a great deal, even if it is only spoken about for a moment. On organ donation, I would say [[yes, I am a donor->organ-yes]] [[no, I am not->organ-no]] [[I am not sure anymore->organ-unsure]].
+One last thing that can matter a great deal. On organ donation, I would say [[yes, I am a donor->organ-yes]] [[no, I am not->organ-no]] [[I am not sure anymore->organ-unsure]].
 
 
 :: organ-yes
 (set: $organDonorStatus to "I am an organ donor")
 
-It matters to me that this is clear, even if the topic itself is not light. On organ donation, my answer is yes.
+It matters to me that this is clear, even if the topic is not light.
 
 [[What I need you to know...->end]]
 
@@ -134,7 +110,7 @@ It matters to me that this is clear, even if the topic itself is not light. On o
 :: organ-no
 (set: $organDonorStatus to "I am not an organ donor")
 
-It matters to me that this is clear, even if the topic itself is not light. On organ donation, my answer is no.
+It matters to me that this is clear, even if the topic is not light.
 
 [[What I need you to know...->end]]
 
@@ -142,16 +118,14 @@ It matters to me that this is clear, even if the topic itself is not light. On o
 :: organ-unsure
 (set: $organDonorStatus to "I am not fully sure what I want around organ donation")
 
-It matters to me that this is clear, even if the answer is still unfinished. On organ donation, I am still not fully sure.
+It matters to me that this is clear, even if the answer is still unfinished.
 
 [[What I need you to know...->end]]
 
 
 :: end
-If something urgent happens, I would want $emergencyFirst contacted first, and if that does not work I would want $emergencyBackup tried next. The health issues I am living with these days are $healthIssues, and the most current practical list of medicines, allergies, doctors, and pharmacy details lives $medsWhere.
+If something urgent happens, I would want $emergencyContact reached first.
 
-I also want you to know the wider picture. The conditions that run in our family, or that stay on my mind for the future, are $familyConditions. When I am not well, the best care usually starts with recognizing $careHelp.
+The current health picture: $healthPicture. When I am not well, the best care usually starts with noticing $careHelp.
 
-On the paperwork side, I have $poaStatus.(if: $poaPerson is not "")[ The person I named is $poaPerson.](else:)[]
-As for a DNR, I $dnrStatus.(if: $dnrWhere is not "")[ The information that matters most is this: $dnrWhere.](else:)[]
-$organDonorStatus. I am writing this down because calm is easier to borrow when the people around me know what matters and how to care for me well.
+On the paperwork side, I have $poaStatus.(if: $poaPerson is not "")[ The person I named is $poaPerson.](else:)[] As for a DNR, I $dnrStatus.(if: $dnrWhere is not "")[ The information that matters most is: $dnrWhere.](else:)[] $organDonorStatus. I am writing this down so the people around me have what they need before they need it.
