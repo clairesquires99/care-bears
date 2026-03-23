@@ -1,4 +1,5 @@
 import { Button } from '@/src/components/ui/Button'
+import { APP_NAME } from '@/src/lib/constants'
 
 export default function CompletePage() {
   return (
@@ -26,7 +27,7 @@ export default function CompletePage() {
             Want to start your own conversations?
           </p>
           <p className="text-sm mb-4" style={{ color: '#9a8a7d' }}>
-            Our Hearth helps families have these important discussions.
+            {APP_NAME} helps families have these important discussions.
           </p>
           <Button href="/">
             Learn more →

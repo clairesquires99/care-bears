@@ -1,5 +1,19 @@
 [
   {
+    "id": "getting-to-know-me",
+    "title": "Getting to Know Me",
+    "description": "A gentle conversation about personality, memories, and the parts of me I still want you to know. Designed to open the door to deeper talks without making them feel heavy.",
+    "category": "Getting to Know",
+    "storyFile": "getting-to-know-me.twee"
+  },
+  {
+    "id": "medical-and-care-planning",
+    "title": "Medical & Care Planning",
+    "description": "A practical, caring walkthrough of the health details, emergency contacts, and care preferences that can matter most when life gets complicated.",
+    "category": "Medical",
+    "storyFile": "medical-and-care-planning.twee"
+  },
+  {
     "id": "end-of-life-wishes",
     "title": "End-of-Life Wishes",
     "description": "Document how you'd like to be remembered and cared for. This conversation helps your family honor your wishes with clarity and confidence.",

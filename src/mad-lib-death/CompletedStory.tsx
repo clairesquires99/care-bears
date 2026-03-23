@@ -75,30 +75,30 @@ function getPassageText(
 function replayStory(
   story: TweeStory,
   choices: number[],
-  initialVariables: Record<string, string> = {},
+  savedVariables: Record<string, string>,
 ): { history: { text: string; choiceLabel: string }[]; finalText: string } {
   let currentId = story.startPassage;
-  const variables: Record<string, string> = { ...initialVariables };
+  const variables: Record<string, string> = { ...savedVariables };
   const history: { text: string; choiceLabel: string }[] = [];
   let choiceIdx = 0;
+  let steps = 0;
+  const MAX_STEPS = 100;
 
-  while (true) {
+  while (steps++ < MAX_STEPS) {
     const passage = story.passages[currentId];
     if (!passage) break;
     const { text, choices: links } = getPassageText(passage, variables);
 
-    if (passage.input) {
-      // Free-text input passage: navigate to submitTarget using the saved variable value
-      const varValue = variables[passage.input.variable] ?? "";
-      if (!varValue) break;
-      history.push({ text, choiceLabel: varValue });
-      currentId = passage.input.submitTarget;
-    } else if (links && choiceIdx < choices.length) {
-      // Choice passage: consume the next choice index
-      const choiceIndex = choices[choiceIdx++];
-      if (choiceIndex >= links.length) break;
+    if (links && links.length > 0) {
+      const choiceIndex = choices[choiceIdx];
+      if (choiceIndex === undefined || choiceIndex >= links.length) break;
       history.push({ text, choiceLabel: links[choiceIndex].label });
       currentId = links[choiceIndex].target;
+      choiceIdx++;
+    } else if (passage.input) {
+      const inputValue = variables[passage.input.variable] ?? "";
+      history.push({ text, choiceLabel: inputValue || "—" });
+      currentId = passage.input.submitTarget;
     } else {
       break;
     }
@@ -117,17 +117,17 @@ function replayStory(
 export function CompletedStory({
   story,
   choices,
-  variables = {},
+  variables,
 }: {
   story: TweeStory;
   choices: number[];
   variables?: Record<string, string>;
 }) {
-  const { history, finalText } = replayStory(story, choices, variables);
+  const { history, finalText } = replayStory(story, choices, variables ?? {});
   const finalParagraphs = buildParagraphs(parseRich(finalText));
 
   return (
-    <div className="flex flex-col gap-8 text-lg leading-8 text-zinc-800 dark:text-zinc-200">
+    <div className="flex flex-col gap-8 text-lg leading-8" style={{ color: "#1a1512" }}>
       {history.map((entry, i) => {
         const paragraphs = buildParagraphs(parseRich(entry.text));
         return (

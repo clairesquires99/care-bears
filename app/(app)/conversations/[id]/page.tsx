@@ -102,7 +102,11 @@ export default async function ConversationDetailPage({
       </div>
 
       {conv.status === "completed" && conv.choices && (
-        <CompletedStory story={story} choices={conv.choices} variables={conv.variables ?? {}} />
+        <CompletedStory
+          story={story}
+          choices={conv.choices}
+          variables={conv.variables ?? {}}
+        />
       )}
     </div>
   );
