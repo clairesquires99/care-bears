@@ -51,7 +51,7 @@ export default function TopicDetailClient({
   const topic = topics.find((t) => t.id === topicId);
   const router = useRouter();
   const categoryColor = topic
-    ? categoryColors[topic.category] ?? { bg: "#f6f3ef", color: "#6b5e52" }
+    ? (categoryColors[topic.category] ?? { bg: "#f6f3ef", color: "#6b5e52" })
     : { bg: "#f6f3ef", color: "#6b5e52" };
 
   const [showPicker, setShowPicker] = useState(false);
@@ -67,7 +67,10 @@ export default function TopicDetailClient({
   } | null>(null);
   const [showComingSoon, setShowComingSoon] = useState(false);
 
-  const COMING_SOON_TOPICS = ["medical-emergency-planning", "finances-and-estate"];
+  const COMING_SOON_TOPICS = [
+    "medical-emergency-planning",
+    "finances-and-estate",
+  ];
 
   async function fetchPastConvs() {
     const supabase = createClient();
@@ -205,7 +208,11 @@ export default function TopicDetailClient({
             <p className="text-sm mb-5" style={{ color: "#6b5e52" }}>
               This conversation is still being crafted. Check back soon!
             </p>
-            <Button onClick={() => setShowComingSoon(false)} className="w-full" size="sm">
+            <Button
+              onClick={() => setShowComingSoon(false)}
+              className="w-full"
+              size="sm"
+            >
               Got it
             </Button>
           </div>
@@ -338,10 +345,13 @@ export default function TopicDetailClient({
                   {sentCode.code}
                 </p>
                 <p className="text-xs mt-2" style={{ color: "#6b5e52" }}>
-                  They can enter this at /parent to start the conversation.
+                  Tell your parent to go to{" "}
+                  <span className="font-bold">app.ourhearth.co/parent</span> to
+                  start the conversation.
                 </p>
                 <p className="text-xs mt-1" style={{ color: "#9a8a7d" }}>
-                  Email sending coming soon. Share this code directly for now.
+                  Email sending coming soon. Share this code with your parent
+                  directly for now.
                 </p>
               </div>
             )}
@@ -466,7 +476,11 @@ export default function TopicDetailClient({
             {COMING_SOON_TOPICS.includes(topicId) ? (
               <div
                 className="rounded-2xl border p-6 sm:p-8 flex items-center justify-center"
-                style={{ background: "#fdfcfa", borderColor: "#e5ddd5", minHeight: "200px" }}
+                style={{
+                  background: "#fdfcfa",
+                  borderColor: "#e5ddd5",
+                  minHeight: "200px",
+                }}
               >
                 <p className="text-sm font-medium" style={{ color: "#9a8a7d" }}>
                   Coming soon
@@ -476,7 +490,8 @@ export default function TopicDetailClient({
               <>
                 <p className="text-sm mb-6" style={{ color: "#9a8a7d" }}>
                   Here&apos;s a preview of how this conversation might flow. The
-                  exact way the story will unfold will depend on how they answer.
+                  exact way the story will unfold will depend on how they
+                  answer.
                 </p>
                 <div
                   className="rounded-2xl border p-6 sm:p-8"
