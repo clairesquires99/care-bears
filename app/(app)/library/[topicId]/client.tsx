@@ -191,6 +191,8 @@ export default function TopicDetailClient({
         <RelationshipPicker
           onConfirm={handleSend}
           onClose={() => setShowPicker(false)}
+          storyId={topicId}
+          storyTitle={topic.title}
         />
       )}
 
@@ -362,7 +364,6 @@ export default function TopicDetailClient({
                 if (COMING_SOON_TOPICS.includes(topicId)) {
                   setShowComingSoon(true);
                 } else {
-                  track("story_send_to_clicked", { story_id: topicId, story_title: topic.title });
                   setShowPicker(true);
                 }
               }}

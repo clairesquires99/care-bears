@@ -1,5 +1,6 @@
 'use client'
 
+import { track } from '@vercel/analytics'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/src/lib/supabase/client'
 import { Relationship } from '@/src/lib/types'
@@ -8,9 +9,11 @@ import { Button } from '@/src/components/ui/Button'
 interface RelationshipPickerProps {
   onConfirm: (relationships: Relationship[]) => void
   onClose: () => void
+  storyId?: string
+  storyTitle?: string
 }
 
-export function RelationshipPicker({ onConfirm, onClose }: RelationshipPickerProps) {
+export function RelationshipPicker({ onConfirm, onClose, storyId, storyTitle }: RelationshipPickerProps) {
   const [relationships, setRelationships] = useState<Relationship[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
@@ -34,6 +37,10 @@ export function RelationshipPicker({ onConfirm, onClose }: RelationshipPickerPro
 
   function handleConfirm() {
     const chosen = relationships.filter((r) => selected.has(r.id))
+    track("story_send_to_clicked", {
+      ...(storyId && { story_id: storyId }),
+      ...(storyTitle && { story_title: storyTitle }),
+    })
     onConfirm(chosen)
   }
 
