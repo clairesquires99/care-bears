@@ -8,6 +8,7 @@ import { createClient } from "@/src/lib/supabase/client";
 import { Relationship, Topic } from "@/src/lib/types";
 import { StaticStoryPreview } from "@/src/mad-lib-death/StaticStoryPreview";
 import { TweeStory } from "@/src/mad-lib-death/parse-twee";
+import { track } from "@vercel/analytics";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -357,11 +358,14 @@ export default function TopicDetailClient({
             )}
 
             <Button
-              onClick={() =>
-                COMING_SOON_TOPICS.includes(topicId)
-                  ? setShowComingSoon(true)
-                  : setShowPicker(true)
-              }
+              onClick={() => {
+                if (COMING_SOON_TOPICS.includes(topicId)) {
+                  setShowComingSoon(true);
+                } else {
+                  track("story_send_to_clicked", { story_id: topicId, story_title: topic.title });
+                  setShowPicker(true);
+                }
+              }}
               disabled={sending}
               className="w-full mb-3"
             >
@@ -449,6 +453,7 @@ export default function TopicDetailClient({
                             href={`/conversations/${conv.id}`}
                             className="text-xs font-medium whitespace-nowrap"
                             style={{ color: "#d97706" }}
+                            onClick={() => track("completed_story_viewed", { story_id: topicId, story_title: topic.title, conversation_id: conv.id })}
                           >
                             View →
                           </Link>
