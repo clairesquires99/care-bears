@@ -1,4 +1,7 @@
+"use client";
+
 import { Topic } from "@/src/lib/types";
+import { track } from "@vercel/analytics";
 import Link from "next/link";
 
 interface TopicCardProps {
@@ -25,6 +28,7 @@ export function TopicCard({ topic, hasSent }: TopicCardProps) {
       href={`/library/${topic.id}`}
       className="block rounded-3xl p-6 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
       style={{ background: "#ffffff" }}
+      onClick={() => track("story_opened", { story_id: topic.id, story_title: topic.title })}
     >
       <div className="flex items-start justify-between mb-4">
         <span
