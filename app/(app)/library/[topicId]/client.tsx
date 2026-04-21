@@ -75,12 +75,16 @@ export default function TopicDetailClient({
 
   async function fetchPastConvs() {
     const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    console.log("fetchPastConvs user.id:", user.id);
     const { data } = await supabase
       .from("conversations")
       .select(
         "id, status, sent_at, access_code, choices, relationships(display_name)",
       )
       .eq("topic_id", topicId)
+      .eq("user_id", user.id)
       .neq("status", "draft")
       .order("created_at", { ascending: false });
     setPastConvs((data as unknown as ConvRow[]) ?? []);

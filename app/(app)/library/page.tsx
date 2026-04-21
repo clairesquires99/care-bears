@@ -3,6 +3,8 @@ import topicsData from '@/src/data/topics.json'
 import { Topic } from '@/src/lib/types'
 import { TopicCard } from '@/src/components/TopicCard'
 
+export const dynamic = 'force-dynamic'
+
 const topics = topicsData as Topic[]
 
 export default async function LibraryPage() {
