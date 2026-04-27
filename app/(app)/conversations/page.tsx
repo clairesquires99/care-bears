@@ -3,6 +3,7 @@ import { createClient } from '@/src/lib/supabase/server'
 import topicsData from '@/src/data/topics.json'
 import { Topic } from '@/src/lib/types'
 import { Badge } from '@/src/components/ui/Badge'
+import { CopyLinkButton } from '@/src/components/CopyLinkButton'
 
 const topics = topicsData as Topic[]
 
@@ -120,12 +121,15 @@ export default async function ConversationsPage() {
                     View responses →
                   </Link>
                 ) : (
-                  <span
-                    className="text-xs font-mono px-2.5 py-1 rounded-xl border whitespace-nowrap"
-                    style={{ borderColor: '#e5ddd5', color: '#6b5e52', background: '#f6f3ef' }}
-                  >
-                    {conv.access_code}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="text-xs font-mono px-2.5 py-1 rounded-xl border whitespace-nowrap"
+                      style={{ borderColor: '#e5ddd5', color: '#6b5e52', background: '#f6f3ef' }}
+                    >
+                      {conv.access_code}
+                    </span>
+                    {conv.access_code && <CopyLinkButton code={conv.access_code} />}
+                  </div>
                 )}
               </div>
             )
