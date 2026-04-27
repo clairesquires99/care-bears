@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { StoryTag } from "../components/StoryTag";
 import { TweeLink, TweeStory } from "./parse-twee";
 
-const CHARS_PER_SECOND = 150;
+const CHARS_PER_SECOND = 60;
 
 // ── Rich text helpers ────────────────────────────────────────────────────────
 
@@ -173,7 +173,11 @@ export default function InteractiveStory({
     if (!conversationId) return;
     createClient()
       .from("conversations")
-      .update({ choices: choicesRef.current, variables: variablesRef.current, status })
+      .update({
+        choices: choicesRef.current,
+        variables: variablesRef.current,
+        status,
+      })
       .eq("id", conversationId)
       .then(() => {});
   }
@@ -229,7 +233,7 @@ export default function InteractiveStory({
     <main
       ref={containerRef}
       className="h-screen overflow-y-auto px-8 py-16"
-      style={{ background: '#fef8f0' }}
+      style={{ background: "#fef8f0" }}
     >
       <div className="mx-auto max-w-2xl">
         <div className="mb-8">
@@ -249,9 +253,12 @@ export default function InteractiveStory({
           {!passageChoices && !currentPassage.input && !!completePath ? (
             <div
               className="rounded-3xl p-6 mt-2"
-              style={{ background: '#ffffff', border: '1px solid #fde8c8' }}
+              style={{ background: "#ffffff", border: "1px solid #fde8c8" }}
             >
-              <p className="text-xs font-semibold uppercase tracking-wide mb-4" style={{ color: '#d97706' }}>
+              <p
+                className="text-xs font-semibold uppercase tracking-wide mb-4"
+                style={{ color: "#d97706" }}
+              >
                 Your story
               </p>
               {paragraphs.map((para, i) => (
@@ -267,7 +274,9 @@ export default function InteractiveStory({
                 >
                   {confirmRedo ? (
                     <div className="flex items-center gap-3">
-                      <span className="text-sm text-red-500">Erase answers and restart?</span>
+                      <span className="text-sm text-red-500">
+                        Erase answers and restart?
+                      </span>
                       <button
                         onClick={handleRedo}
                         className="text-sm font-semibold text-red-600 hover:text-red-700 transition-colors"
@@ -321,7 +330,14 @@ export default function InteractiveStory({
                           {passageChoices!.map((link, idx) => (
                             <StoryTag
                               key={link.target}
-                              onClick={() => navigate(link.label, link.target, undefined, idx)}
+                              onClick={() =>
+                                navigate(
+                                  link.label,
+                                  link.target,
+                                  undefined,
+                                  idx,
+                                )
+                              }
                             >
                               {link.label}
                             </StoryTag>
@@ -342,7 +358,9 @@ export default function InteractiveStory({
                             type="text"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleInput()}
+                            onKeyDown={(e) =>
+                              e.key === "Enter" && handleInput()
+                            }
                             className="rounded-full border border-zinc-300 bg-zinc-50 px-4 py-1.5 text-sm text-zinc-700 outline-none placeholder:text-zinc-400 focus:border-zinc-400"
                             placeholder={currentPassage.input!.placeholder}
                           />

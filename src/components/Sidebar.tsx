@@ -3,7 +3,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState, useRef, useEffect } from 'react'
 import { APP_NAME } from '@/src/lib/constants'
+import { createClient } from '@/src/lib/supabase/client'
 
 interface SidebarProps {
   userEmail?: string
@@ -45,6 +47,24 @@ const navItems = [
 
 export function Sidebar({ userEmail }: SidebarProps) {
   const pathname = usePathname()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+    if (menuOpen) document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [menuOpen])
+
+  async function handleLogout() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    window.location.href = '/'
+  }
 
   return (
     <aside
@@ -93,10 +113,29 @@ export function Sidebar({ userEmail }: SidebarProps) {
 
       {/* User */}
       {userEmail && (
-        <div className="mt-auto pt-4 border-t" style={{ borderColor: '#ede6dc' }}>
-          <p className="text-xs px-3" style={{ color: '#9a8a7d' }} title={userEmail}>
+        <div className="mt-auto pt-4 border-t relative" style={{ borderColor: '#ede6dc' }} ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen(prev => !prev)}
+            className="w-full text-left text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[#fef8f0] cursor-pointer"
+            style={{ color: '#9a8a7d' }}
+            title={userEmail}
+          >
             {userEmail.length > 28 ? userEmail.slice(0, 26) + '…' : userEmail}
-          </p>
+          </button>
+          {menuOpen && (
+            <div
+              className="absolute bottom-full left-0 mb-1 w-full rounded-xl border shadow-sm overflow-hidden"
+              style={{ background: '#ffffff', borderColor: '#ede6dc' }}
+            >
+              <button
+                onClick={handleLogout}
+                className="w-full text-left text-sm px-4 py-2.5 transition-colors hover:bg-[#fef8f0]"
+                style={{ color: '#6b5e52' }}
+              >
+                Log out
+              </button>
+            </div>
+          )}
         </div>
       )}
     </aside>
