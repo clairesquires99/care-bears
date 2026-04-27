@@ -25,6 +25,7 @@ export function RelationshipsClient({ initial }: { initial: Relationship[] }) {
     setAddError('')
     const result = await addRelationship(displayName, email)
     if (result.error) { setAddError(result.error); setSaving(false); return }
+    setRelationships((prev) => [...prev, result.data])
     setDisplayName('')
     setEmail('')
     setShowForm(false)
