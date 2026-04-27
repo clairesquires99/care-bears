@@ -34,7 +34,7 @@ export default function RelationshipsPage() {
 
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    if (!user) { setSaving(false); return }
 
     const { error } = await supabase.from('relationships').insert({
       user_id: user.id,
