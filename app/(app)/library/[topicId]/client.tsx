@@ -5,6 +5,7 @@ import { Badge } from "@/src/components/ui/Badge";
 import { Button } from "@/src/components/ui/Button";
 import topicsData from "@/src/data/topics.json";
 import { createClient } from "@/src/lib/supabase/client";
+import { sendConversation } from "./actions";
 import { Relationship, Topic } from "@/src/lib/types";
 import { StaticStoryPreview } from "@/src/mad-lib-death/StaticStoryPreview";
 import { TweeStory } from "@/src/mad-lib-death/parse-twee";
@@ -12,6 +13,41 @@ import { track } from "@vercel/analytics";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+const PARENT_BASE_URL = "https://app.ourhearth.co/parent";
+
+function CopyLinkInline({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+  async function handleCopy() {
+    await navigator.clipboard.writeText(`${PARENT_BASE_URL}?code=${code}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+  return (
+    <button
+      onClick={handleCopy}
+      title="Copy link"
+      className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-xl border transition-colors whitespace-nowrap"
+      style={{
+        borderColor: copied ? "#059669" : "#6ee7b7",
+        color: copied ? "#059669" : "#065f46",
+        background: copied ? "#d1fae5" : "#f0fdf4",
+      }}
+    >
+      {copied ? (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      ) : (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+        </svg>
+      )}
+      {copied ? "Copied!" : "Copy link"}
+    </button>
+  );
+}
 
 const topics = topicsData as Topic[];
 
@@ -45,9 +81,13 @@ function generateCode(): string {
 export default function TopicDetailClient({
   topicId,
   story,
+  relationships,
+  userId,
 }: {
   topicId: string;
   story: TweeStory | null;
+  relationships: Relationship[];
+  userId: string;
 }) {
   const topic = topics.find((t) => t.id === topicId);
   const router = useRouter();
@@ -74,17 +114,15 @@ export default function TopicDetailClient({
   ];
 
   async function fetchPastConvs() {
+    if (!userId) return;
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    console.log("fetchPastConvs user.id:", user.id);
     const { data } = await supabase
       .from("conversations")
       .select(
         "id, status, sent_at, access_code, choices, relationships(display_name)",
       )
       .eq("topic_id", topicId)
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .neq("status", "draft")
       .order("created_at", { ascending: false });
     setPastConvs((data as unknown as ConvRow[]) ?? []);
@@ -110,70 +148,48 @@ export default function TopicDetailClient({
     );
   }
 
-  async function handleSend(relationships: Relationship[]) {
+  async function handleSend(rels: Relationship[]) {
     setShowPicker(false);
 
+    // Check for existing conversations (anon policy allows this read)
     const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
-
-    // Check for existing conversations for any of the selected relationships
     const { data: existing } = await supabase
       .from("conversations")
       .select("relationship_id, status")
       .eq("topic_id", topic!.id)
-      .eq("user_id", user.id)
-      .in(
-        "relationship_id",
-        relationships.map((r) => r.id),
-      );
+      .eq("user_id", userId)
+      .in("relationship_id", rels.map((r) => r.id));
 
     const conflicts = (existing ?? [])
       .map((row) => ({
-        rel: relationships.find((r) => r.id === row.relationship_id)!,
+        rel: rels.find((r) => r.id === row.relationship_id)!,
         status: row.status as string,
       }))
       .filter((c) => c.rel != null);
 
     if (conflicts.length > 0) {
-      setOverwriteWarning({ pendingRelationships: relationships, conflicts });
+      setOverwriteWarning({ pendingRelationships: rels, conflicts });
       return;
     }
 
-    await doSend(relationships, supabase, user.id);
+    await doSend(rels);
   }
 
-  async function doSend(
-    relationships: Relationship[],
-    supabase: ReturnType<typeof createClient>,
-    userId: string,
-  ) {
+  async function doSend(rels: Relationship[]) {
     setOverwriteWarning(null);
     setSending(true);
 
     const codes: string[] = [];
 
-    for (const rel of relationships) {
+    for (const rel of rels) {
       const code = generateCode();
-      await supabase.from("conversations").upsert(
-        {
-          user_id: userId,
-          relationship_id: rel.id,
-          topic_id: topic!.id,
-          status: "sent",
-          access_code: code,
-          sent_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id,topic_id,relationship_id" },
-      );
+      await sendConversation({ relationshipId: rel.id, topicId: topic!.id, code });
       codes.push(code);
     }
 
     setSentCode({
       code: codes.join(", "),
-      label: relationships.map((r) => r.display_name).join(", "),
+      label: rels.map((r) => r.display_name).join(", "),
     });
     setSending(false);
     fetchPastConvs();
@@ -181,12 +197,7 @@ export default function TopicDetailClient({
 
   async function handleOverwriteConfirm() {
     if (!overwriteWarning) return;
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
-    await doSend(overwriteWarning.pendingRelationships, supabase, user.id);
+    await doSend(overwriteWarning.pendingRelationships);
   }
 
   return (
@@ -197,6 +208,7 @@ export default function TopicDetailClient({
           onClose={() => setShowPicker(false)}
           storyId={topicId}
           storyTitle={topic.title}
+          relationships={relationships}
         />
       )}
 
@@ -343,22 +355,26 @@ export default function TopicDetailClient({
                   Sent to {sentCode.label} ✓
                 </p>
                 <p className="text-xs mb-2" style={{ color: "#065f46" }}>
-                  Share this code with them:
+                  Share this link with your parent:
                 </p>
-                <p
-                  className="text-2xl font-bold tracking-widest"
-                  style={{ color: "#1a1512" }}
-                >
-                  {sentCode.code}
-                </p>
-                <p className="text-xs mt-2" style={{ color: "#6b5e52" }}>
-                  Tell your parent to go to{" "}
-                  <span className="font-bold">app.ourhearth.co/parent</span> to
-                  start the conversation.
+                <div className="flex items-center gap-2 mb-2">
+                  <input
+                    readOnly
+                    value={`app.ourhearth.co/parent?code=${sentCode.code}`}
+                    onFocus={(e) => e.target.select()}
+                    className="text-xs font-mono px-2.5 py-1.5 rounded-xl border flex-1 min-w-0 outline-none cursor-text"
+                    style={{ background: "#f0fdf4", borderColor: "#6ee7b7", color: "#065f46" }}
+                  />
+                  <CopyLinkInline code={sentCode.code} />
+                </div>
+                <p className="text-xs" style={{ color: "#6b5e52" }}>
+                  Share via WhatsApp, email, or any messaging app.
                 </p>
                 <p className="text-xs mt-1" style={{ color: "#9a8a7d" }}>
-                  Email sending coming soon. Share this code with your parent
-                  directly for now.
+                  Or they can visit{" "}
+                  <span className="font-bold">app.ourhearth.co/parent</span> and
+                  enter code{" "}
+                  <span className="font-bold tracking-widest">{sentCode.code}</span>.
                 </p>
               </div>
             )}

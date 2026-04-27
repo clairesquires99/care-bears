@@ -1,6 +1,7 @@
 import { parseTwee } from "@/src/mad-lib-death/parse-twee";
 import topicsData from "@/src/data/topics.json";
-import { Topic } from "@/src/lib/types";
+import { Relationship, Topic } from "@/src/lib/types";
+import { createClient } from "@/src/lib/supabase/server";
 import fs from "fs";
 import path from "path";
 import TopicDetailClient from "./client";
@@ -24,5 +25,14 @@ export default async function TopicDetailPage({
       )
     : null;
 
-  return <TopicDetailClient topicId={topicId} story={story} />;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data } = await supabase
+    .from("relationships")
+    .select("*")
+    .eq("user_id", user?.id)
+    .order("created_at");
+  const relationships = (data ?? []) as Relationship[];
+
+  return <TopicDetailClient topicId={topicId} story={story} relationships={relationships} userId={user?.id ?? ''} />;
 }

@@ -1,8 +1,7 @@
 'use client'
 
 import { track } from '@vercel/analytics'
-import { useEffect, useState } from 'react'
-import { createClient } from '@/src/lib/supabase/client'
+import { useState } from 'react'
 import { Relationship } from '@/src/lib/types'
 import { Button } from '@/src/components/ui/Button'
 
@@ -11,20 +10,11 @@ interface RelationshipPickerProps {
   onClose: () => void
   storyId?: string
   storyTitle?: string
+  relationships: Relationship[]
 }
 
-export function RelationshipPicker({ onConfirm, onClose, storyId, storyTitle }: RelationshipPickerProps) {
-  const [relationships, setRelationships] = useState<Relationship[]>([])
+export function RelationshipPicker({ onConfirm, onClose, storyId, storyTitle, relationships }: RelationshipPickerProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.from('relationships').select('*').order('created_at').then(({ data }) => {
-      setRelationships(data ?? [])
-      setLoading(false)
-    })
-  }, [])
 
   function toggle(id: string) {
     setSelected((prev) => {
@@ -50,9 +40,7 @@ export function RelationshipPicker({ onConfirm, onClose, storyId, storyTitle }: 
         <h2 className="font-bold text-lg mb-1" style={{ color: '#1a1512' }}>Send to...</h2>
         <p className="text-sm mb-5" style={{ color: '#6b5e52' }}>Choose who to send this conversation to</p>
 
-        {loading ? (
-          <p className="text-sm" style={{ color: '#9a8a7d' }}>Loading...</p>
-        ) : relationships.length === 0 ? (
+        {relationships.length === 0 ? (
           <div className="text-center py-4">
             <p className="text-sm mb-3" style={{ color: '#9a8a7d' }}>No relationships yet.</p>
             <a href="/relationships" className="text-sm underline" style={{ color: '#d97706' }}>
