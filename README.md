@@ -35,9 +35,21 @@ A guided conversation app that helps adult children have important talks with th
    cp .env.local.example .env.local
    ```
 
-   Open `.env.local` and fill in the two Supabase values. Get them from the [Supabase dashboard](https://supabase.com/dashboard) → select the **care-bears** project → **Project Settings** → **API**:
-   - Copy **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
-   - Copy **Publishable (anon) key** → `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`
+   Fill in the values in `.env.local`. All three Supabase keys are in the [Supabase dashboard](https://supabase.com/dashboard) → select the **care-bears** project → **Project Settings** → **Data API**:
+
+   | Variable | Where to find it |
+   |---|---|
+   | `NEXT_PUBLIC_SUPABASE_URL` | Project URL |
+   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY` | Publishable (anon) key |
+   | `SUPABASE_SERVICE_ROLE_KEY` | service_role secret |
+
+   Then set up the dev auth bypass so you can use the app locally without going through the magic-link flow:
+
+   | Variable | Where to find it |
+   |---|---|
+   | `DEV_BYPASS_AUTH` | Set to `true` |
+   | `DEV_USER_ID` | Supabase dashboard → **Authentication → Users** → your user ID |
+   | `DEV_USER_EMAIL` | The email for that user |
 
 4. **Run the dev server**
    ```bash
@@ -64,7 +76,7 @@ The main app for the person initiating conversations.
 
 ### Entry Point 2: Parent Flow → `/parent`
 
-No login required. The parent uses a 6-character access code their child shares with them.
+No login required. The child shares a direct link (`/parent?code=XXXXXX`) or a 6-character code their parent can enter manually.
 
 | Step | Route                               | Description                                |
 | ---- | ----------------------------------- | ------------------------------------------ |

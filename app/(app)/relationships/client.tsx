@@ -9,19 +9,23 @@ import { addRelationship, deleteRelationship } from './actions'
 const QUICK_NAMES = ['Mom', 'Dad', 'Grandma', 'Grandpa', 'Partner']
 
 export function RelationshipsClient({ initial }: { initial: Relationship[] }) {
+  const [relationships, setRelationships] = useState(initial)
   const [showForm, setShowForm] = useState(false)
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
+  const [addError, setAddError] = useState('')
+  const [deleteError, setDeleteError] = useState('')
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault()
     if (!displayName) return
     setSaving(true)
-    setError('')
+    setAddError('')
     const result = await addRelationship(displayName, email)
-    if (result.error) { setError(result.error); setSaving(false); return }
+    if (result.error) { setAddError(result.error); setSaving(false); return }
+    setRelationships((prev) => [...prev, result.data])
     setDisplayName('')
     setEmail('')
     setShowForm(false)
@@ -29,7 +33,10 @@ export function RelationshipsClient({ initial }: { initial: Relationship[] }) {
   }
 
   async function handleDelete(id: string) {
-    await deleteRelationship(id)
+    const result = await deleteRelationship(id)
+    if (result.error) { setDeleteError(result.error); return }
+    setRelationships((prev) => prev.filter((r) => r.id !== id))
+    setConfirmDeleteId(null)
   }
 
   return (
@@ -82,7 +89,7 @@ export function RelationshipsClient({ initial }: { initial: Relationship[] }) {
               className="w-full px-4 py-3 rounded-xl border text-sm outline-none"
               style={{ borderColor: '#e5ddd5', background: '#f6f3ef' }}
             />
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {addError && <p className="text-sm text-red-600">{addError}</p>}
             <div className="flex gap-3">
               <Button type="submit" disabled={saving || !displayName} size="sm">
                 {saving ? 'Saving...' : 'Save'}
@@ -95,26 +102,48 @@ export function RelationshipsClient({ initial }: { initial: Relationship[] }) {
         </Card>
       )}
 
-      {initial.length === 0 ? (
+      {deleteError && <p className="text-sm text-red-600 mb-4">{deleteError}</p>}
+
+      {relationships.length === 0 ? (
         <Card muted className="p-8 text-center">
           <p className="text-sm mb-4" style={{ color: '#9a8a7d' }}>No relationships yet.</p>
           <Button onClick={() => setShowForm(true)} size="sm">Add your first person</Button>
         </Card>
       ) : (
         <div className="space-y-3">
-          {initial.map((rel) => (
+          {relationships.map((rel) => (
             <Card key={rel.id} className="p-5 flex items-center justify-between shadow-sm">
               <div>
                 <p className="font-semibold" style={{ color: '#1a1512' }}>{rel.display_name}</p>
                 {rel.email && <p className="text-sm mt-0.5" style={{ color: '#9a8a7d' }}>{rel.email}</p>}
               </div>
-              <button
-                onClick={() => handleDelete(rel.id)}
-                className="text-xs underline"
-                style={{ color: '#c4a592' }}
-              >
-                Remove
-              </button>
+              {confirmDeleteId === rel.id ? (
+                <div className="flex items-center gap-3">
+                  <span className="text-xs" style={{ color: '#6b5e52' }}>Remove {rel.display_name}?</span>
+                  <button
+                    onClick={() => handleDelete(rel.id)}
+                    className="text-xs underline"
+                    style={{ color: '#c0392b' }}
+                  >
+                    Yes, remove
+                  </button>
+                  <button
+                    onClick={() => setConfirmDeleteId(null)}
+                    className="text-xs underline"
+                    style={{ color: '#9a8a7d' }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmDeleteId(rel.id)}
+                  className="text-xs underline"
+                  style={{ color: '#c4a592' }}
+                >
+                  Remove
+                </button>
+              )}
             </Card>
           ))}
         </div>
