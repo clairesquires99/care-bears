@@ -2,6 +2,7 @@ import { createClient } from '@/src/lib/supabase/server'
 import topicsData from '@/src/data/topics.json'
 import { Topic } from '@/src/lib/types'
 import { TopicCard } from '@/src/components/TopicCard'
+import { CustomStoryCard } from '@/src/components/CustomStoryCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,15 +12,25 @@ export default async function LibraryPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: conversations } = user
-    ? await supabase
-        .from('conversations')
-        .select('topic_id')
-        .eq('user_id', user.id)
-        .neq('status', 'draft')
-    : { data: [] }
+  const [{ data: conversations }, { data: interest }] = await Promise.all([
+    user
+      ? supabase
+          .from('conversations')
+          .select('topic_id')
+          .eq('user_id', user.id)
+          .neq('status', 'draft')
+      : Promise.resolve({ data: [] }),
+    user
+      ? supabase
+          .from('custom_story_interests')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+  ])
 
   const sentTopicIds = new Set((conversations ?? []).map((c) => c.topic_id))
+  const hasRegistered = interest !== null
 
   return (
     <div className="p-8">
@@ -36,6 +47,7 @@ export default async function LibraryPage() {
         {topics.map((topic) => (
           <TopicCard key={topic.id} topic={topic} hasSent={sentTopicIds.has(topic.id)} />
         ))}
+        <CustomStoryCard hasRegistered={hasRegistered} />
       </div>
     </div>
   )
