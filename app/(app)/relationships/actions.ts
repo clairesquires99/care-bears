@@ -45,7 +45,6 @@ export async function deleteRelationshipAndConversations(id: string) {
 
   if (convos && convos.length > 0) {
     const ids = convos.map((c) => c.id)
-    await supabase.from('answers').delete().in('conversation_id', ids)
     await supabase.from('conversations').delete().in('id', ids)
   }
 
