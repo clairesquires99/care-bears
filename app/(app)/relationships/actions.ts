@@ -25,9 +25,33 @@ export async function deleteRelationship(id: string) {
   if (!user) return { error: 'Not authenticated' }
   const { error } = await supabase.from('relationships').delete().eq('id', id).eq('user_id', user.id)
   if (error) {
-    if (error.code === '23503') return { error: 'This person has conversations linked to them and can\'t be removed.' }
+    if (error.code === '23503') return { error: 'HAS_CONVERSATIONS' }
     return { error: error.message }
   }
+  revalidatePath('/relationships')
+  return { error: null }
+}
+
+export async function deleteRelationshipAndConversations(id: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  const { data: convos } = await supabase
+    .from('conversations')
+    .select('id')
+    .eq('relationship_id', id)
+    .eq('user_id', user.id)
+
+  if (convos && convos.length > 0) {
+    const ids = convos.map((c) => c.id)
+    await supabase.from('answers').delete().in('conversation_id', ids)
+    await supabase.from('conversations').delete().in('id', ids)
+  }
+
+  const { error } = await supabase.from('relationships').delete().eq('id', id).eq('user_id', user.id)
+  if (error) return { error: error.message }
+
   revalidatePath('/relationships')
   return { error: null }
 }
