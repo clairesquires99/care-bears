@@ -43,7 +43,7 @@ export function MobileNav() {
   return (
     <nav
       className="lg:hidden fixed bottom-0 left-0 right-0 flex border-t z-50"
-      style={{ background: '#ffffff', borderColor: '#ede6dc' }}
+      style={{ background: '#ffffff', borderColor: 'rgba(60,30,10,0.10)' }}
     >
       {navItems.map(({ href, label, icon }) => {
         const active = pathname === href || pathname.startsWith(href + '/')
@@ -52,7 +52,7 @@ export function MobileNav() {
             key={href}
             href={href}
             className="flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium"
-            style={{ color: active ? '#d97706' : '#9a8a7d' }}
+            style={{ color: active ? '#d8701a' : '#9a7040' }}
           >
             {icon}
             {label}

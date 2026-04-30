@@ -27,16 +27,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const baseStyle: React.CSSProperties =
       variant === "primary"
-        ? { background: "#d97706", color: "#fff" }
+        ? { background: "#d8701a", color: "#fff" }
         : variant === "secondary"
           ? {
               background: "transparent",
-              borderColor: "#f59e0b",
-              color: "#92400e",
+              borderColor: "#f08838",
+              color: "#5a4030",
             }
           : variant === "muted"
-            ? { background: "#f4f4f5", color: "#71717a" }
-            : { background: "transparent", color: "#6b5e52" };
+            ? { background: "#f6eedb", color: "#9a7040" }
+            : { background: "transparent", color: "#9a7040" };
 
     const combinedClassName = `inline-flex items-center justify-center transition-all disabled:opacity-60 cursor-pointer ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
     const combinedStyle = { ...baseStyle, ...style };

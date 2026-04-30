@@ -7,11 +7,11 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const statusStyles: Record<BadgeStatus, { bg: string; color: string; label?: string }> = {
-  draft: { bg: '#f3f3f3', color: '#888' },
-  sent: { bg: '#fde8c8', color: '#92400e' },
+  draft: { bg: '#f6eedb', color: '#9a7040' },
+  sent: { bg: '#fde8c8', color: '#5a4030' },
   'in-progress': { bg: '#ffe4e6', color: '#e11d48' },
   completed: { bg: '#d1fae5', color: '#059669' },
-  default: { bg: '#f6f3ef', color: '#6b5e52' },
+  default: { bg: '#f6eedb', color: '#9a7040' },
 }
 
 export function Badge({ status = 'default', className = '', style, children, ...props }: BadgeProps) {

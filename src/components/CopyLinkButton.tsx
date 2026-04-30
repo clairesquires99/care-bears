@@ -19,9 +19,9 @@ export function CopyLinkButton({ code }: { code: string }) {
       title="Copy link"
       className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-xl border transition-colors whitespace-nowrap"
       style={{
-        borderColor: copied ? '#059669' : '#e5ddd5',
-        color: copied ? '#059669' : '#6b5e52',
-        background: copied ? '#d1fae5' : '#f6f3ef',
+        borderColor: copied ? '#059669' : 'rgba(60,30,10,0.10)',
+        color: copied ? '#059669' : '#9a7040',
+        background: copied ? '#d1fae5' : '#f6eedb',
       }}
     >
       {copied ? (

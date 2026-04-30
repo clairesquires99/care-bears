@@ -257,7 +257,7 @@ export default function InteractiveStory({
             >
               <p
                 className="text-xs font-semibold uppercase tracking-wide mb-4"
-                style={{ color: "#d97706" }}
+                style={{ color: "#d8701a" }}
               >
                 Your story
               </p>

@@ -59,7 +59,7 @@ function VerifyForm() {
           height={32}
           className="rounded-xl object-cover"
         />
-        <span className="font-semibold text-lg" style={{ color: "#1a1512" }}>
+        <span className="font-semibold text-lg" style={{ color: "#2a1806" }}>
           {APP_NAME}
         </span>
       </div>
@@ -69,16 +69,16 @@ function VerifyForm() {
         style={{ background: "#ffffff" }}
       >
         <div className="text-5xl mb-6">✉️</div>
-        <h1 className="text-2xl font-bold mb-3" style={{ color: "#1a1512" }}>
+        <h1 className="text-2xl font-bold mb-3" style={{ color: "#2a1806" }}>
           Check your email
         </h1>
-        <p className="text-base mb-1" style={{ color: "#6b5e52" }}>
+        <p className="text-base mb-1" style={{ color: "#9a7040" }}>
           We sent a 6-digit code to
         </p>
         {email && (
           <p
             className="font-semibold text-base mb-6"
-            style={{ color: "#1a1512" }}
+            style={{ color: "#2a1806" }}
           >
             {email}
           </p>
@@ -95,11 +95,11 @@ function VerifyForm() {
             className="w-full px-4 py-4 rounded-xl border text-center text-3xl font-bold tracking-[0.5em] outline-none transition-all"
             style={{
               borderColor: "#d6ccc3",
-              background: "#f6f3ef",
-              color: "#1a1512",
+              background: "#f6eedb",
+              color: "#2a1806",
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = "#d97706";
+              e.target.style.borderColor = "#d8701a";
             }}
             onBlur={(e) => {
               e.target.style.borderColor = "#d6ccc3";
@@ -112,20 +112,20 @@ function VerifyForm() {
             type="submit"
             disabled={loading || !code}
             className="w-full py-3 px-6 rounded-xl font-semibold text-white text-base transition-all disabled:opacity-60"
-            style={{ background: "#d97706" }}
+            style={{ background: "#d8701a" }}
           >
             {loading ? "Verifying..." : "Verify code →"}
           </button>
         </form>
 
-        <p className="mt-4 text-sm" style={{ color: "#9a8a7d" }}>
+        <p className="mt-4 text-sm" style={{ color: "#9a7040" }}>
           Or click the link in your email to sign in automatically.
         </p>
       </div>
 
-      <p className="mt-6 text-sm" style={{ color: "#9a8a7d" }}>
+      <p className="mt-6 text-sm" style={{ color: "#9a7040" }}>
         Wrong email?{" "}
-        <Link href="/" className="underline" style={{ color: "#d97706" }}>
+        <Link href="/" className="underline" style={{ color: "#d8701a" }}>
           Go back
         </Link>
       </p>

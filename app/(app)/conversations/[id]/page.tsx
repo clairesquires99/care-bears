@@ -54,14 +54,14 @@ export default async function ConversationDetailPage({
       <Link
         href="/library"
         className="text-sm mb-6 inline-block"
-        style={{ color: "#9a8a7d" }}
+        style={{ color: "#9a7040" }}
       >
         ← Library
       </Link>
 
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <h1 className="text-2xl font-bold" style={{ color: "#1a1512" }}>
+          <h1 className="text-2xl font-bold" style={{ color: "#2a1806" }}>
             {topic.title}
           </h1>
           <Badge
@@ -74,12 +74,12 @@ export default async function ConversationDetailPage({
         </div>
         <div
           className="flex items-center gap-4 text-sm"
-          style={{ color: "#9a8a7d" }}
+          style={{ color: "#9a7040" }}
         >
           {relationship && (
             <span>
               Sent to{" "}
-              <strong style={{ color: "#1a1512" }}>
+              <strong style={{ color: "#2a1806" }}>
                 {relationship.display_name}
               </strong>
             </span>
@@ -89,7 +89,7 @@ export default async function ConversationDetailPage({
               Code:{" "}
               <code
                 className="font-mono font-bold px-1.5 py-0.5 rounded"
-                style={{ background: "#fde8c8", color: "#92400e" }}
+                style={{ background: "#fde8c8", color: "#5a4030" }}
               >
                 {conv.access_code}
               </code>

@@ -71,19 +71,19 @@ export function Sidebar({ userEmail }: SidebarProps) {
       className="hidden lg:flex w-60 min-h-screen flex-col py-6 px-4 border-r"
       style={{
         background: '#ffffff',
-        borderColor: '#ede6dc',
+        borderColor: 'rgba(60,30,10,0.10)',
       }}
     >
       {/* Logo */}
       <div className="flex items-center gap-2 px-2 mb-8">
         <Image
-          src="/logo.png"
+          src="/logo.svg"
           alt={APP_NAME}
           width={32}
           height={32}
           className="rounded-xl shrink-0 object-cover"
         />
-        <span className="font-semibold text-sm" style={{ color: '#1a1512' }}>
+        <span className="font-semibold text-sm" style={{ color: '#2a1806' }}>
           {APP_NAME}
         </span>
       </div>
@@ -98,11 +98,11 @@ export function Sidebar({ userEmail }: SidebarProps) {
               href={href}
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
               style={{
-                background: active ? '#fef8f0' : 'transparent',
-                color: active ? '#92400e' : '#6b5e52',
+                background: active ? 'rgba(216,112,26,0.05)' : 'transparent',
+                color: active ? '#2a1806' : '#9a7040',
               }}
             >
-              <span style={{ color: active ? '#d97706' : '#9a8a7d' }}>
+              <span style={{ color: active ? '#d8701a' : '#9a7040' }}>
                 {icon}
               </span>
               {label}
@@ -113,11 +113,11 @@ export function Sidebar({ userEmail }: SidebarProps) {
 
       {/* User */}
       {userEmail && (
-        <div className="mt-auto pt-4 border-t relative" style={{ borderColor: '#ede6dc' }} ref={menuRef}>
+        <div className="mt-auto pt-4 border-t relative" style={{ borderColor: 'rgba(60,30,10,0.10)' }} ref={menuRef}>
           <button
             onClick={() => setMenuOpen(prev => !prev)}
-            className="w-full text-left text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[#fef8f0] cursor-pointer"
-            style={{ color: '#9a8a7d' }}
+            className="w-full text-left text-xs px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+            style={{ color: '#9a7040' }}
             title={userEmail}
           >
             {userEmail.length > 28 ? userEmail.slice(0, 26) + '…' : userEmail}
@@ -125,12 +125,12 @@ export function Sidebar({ userEmail }: SidebarProps) {
           {menuOpen && (
             <div
               className="absolute bottom-full left-0 mb-1 w-full rounded-xl border shadow-sm overflow-hidden"
-              style={{ background: '#ffffff', borderColor: '#ede6dc' }}
+              style={{ background: '#ffffff', borderColor: 'rgba(60,30,10,0.10)' }}
             >
               <button
                 onClick={handleLogout}
-                className="w-full text-left text-sm px-4 py-2.5 transition-colors hover:bg-[#fef8f0]"
-                style={{ color: '#6b5e52' }}
+                className="w-full text-left text-sm px-4 py-2.5 transition-colors"
+                style={{ color: '#9a7040' }}
               >
                 Log out
               </button>

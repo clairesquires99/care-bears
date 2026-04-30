@@ -90,7 +90,7 @@ export default function LandingPageClient() {
   return (
     <main
       className="min-h-screen flex flex-col items-center justify-center px-6 py-16"
-      style={{ background: "#faf8f5" }}
+      style={{ background: "#fef1e0" }}
     >
       <div className="w-full max-w-md">
         {/* Logo */}
@@ -105,14 +105,14 @@ export default function LandingPageClient() {
             />
             <span
               className="font-semibold text-lg"
-              style={{ color: "#1a1512" }}
+              style={{ color: "#2a1806" }}
             >
               {APP_NAME}
             </span>
           </div>
           <h1
             className="text-3xl font-bold tracking-tight mb-3"
-            style={{ color: "#1a1512" }}
+            style={{ color: "#2a1806" }}
           >
             Have the conversations
             <br />
@@ -128,12 +128,12 @@ export default function LandingPageClient() {
         {/* Card */}
         <div
           className="rounded-3xl p-8 shadow-sm border"
-          style={{ background: "#ffffff", borderColor: "#ede6dc" }}
+          style={{ background: "#ffffff", borderColor: "rgba(60,30,10,0.10)" }}
         >
           {/* Tabs */}
           <div
             className="flex rounded-xl p-1 mb-6"
-            style={{ background: "#f6f3ef" }}
+            style={{ background: "#f6eedb" }}
           >
             <button
               type="button"
@@ -146,7 +146,7 @@ export default function LandingPageClient() {
                 tab === "otp"
                   ? {
                       background: "#ffffff",
-                      color: "#1a1512",
+                      color: "#2a1806",
                       boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                     }
                   : { color: "#8a7568" }
@@ -165,7 +165,7 @@ export default function LandingPageClient() {
                 tab === "password"
                   ? {
                       background: "#ffffff",
-                      color: "#1a1512",
+                      color: "#2a1806",
                       boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                     }
                   : { color: "#8a7568" }
@@ -181,7 +181,7 @@ export default function LandingPageClient() {
                 <label
                   htmlFor="email-otp"
                   className="block text-sm font-medium mb-2"
-                  style={{ color: "#1a1512" }}
+                  style={{ color: "#2a1806" }}
                 >
                   Your email address
                 </label>
@@ -195,11 +195,11 @@ export default function LandingPageClient() {
                   className="w-full px-4 py-3 rounded-xl border text-base outline-none transition-all"
                   style={{
                     borderColor: "#d6ccc3",
-                    background: "#f6f3ef",
-                    color: "#1a1512",
+                    background: "#f6eedb",
+                    color: "#2a1806",
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = "#d97706";
+                    e.target.style.borderColor = "#d8701a";
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = "#d6ccc3";
@@ -213,7 +213,7 @@ export default function LandingPageClient() {
                 type="submit"
                 disabled={loading || !email}
                 className="w-full py-3 px-6 rounded-xl font-semibold text-white text-base transition-all disabled:opacity-60"
-                style={{ background: "#d97706" }}
+                style={{ background: "#d8701a" }}
               >
                 {loading ? "Sending code..." : "Send me a code →"}
               </button>
@@ -224,7 +224,7 @@ export default function LandingPageClient() {
                 <label
                   htmlFor="email-pw"
                   className="block text-sm font-medium mb-2"
-                  style={{ color: "#1a1512" }}
+                  style={{ color: "#2a1806" }}
                 >
                   Your email address
                 </label>
@@ -239,11 +239,11 @@ export default function LandingPageClient() {
                   className="w-full px-4 py-3 rounded-xl border text-base outline-none transition-all"
                   style={{
                     borderColor: "#d6ccc3",
-                    background: "#f6f3ef",
-                    color: "#1a1512",
+                    background: "#f6eedb",
+                    color: "#2a1806",
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = "#d97706";
+                    e.target.style.borderColor = "#d8701a";
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = "#d6ccc3";
@@ -254,7 +254,7 @@ export default function LandingPageClient() {
                 <label
                   htmlFor="password"
                   className="block text-sm font-medium mb-2"
-                  style={{ color: "#1a1512" }}
+                  style={{ color: "#2a1806" }}
                 >
                   Password
                 </label>
@@ -269,11 +269,11 @@ export default function LandingPageClient() {
                   className="w-full px-4 py-3 rounded-xl border text-base outline-none transition-all"
                   style={{
                     borderColor: "#d6ccc3",
-                    background: "#f6f3ef",
-                    color: "#1a1512",
+                    background: "#f6eedb",
+                    color: "#2a1806",
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = "#d97706";
+                    e.target.style.borderColor = "#d8701a";
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = "#d6ccc3";
@@ -287,7 +287,7 @@ export default function LandingPageClient() {
                 type="submit"
                 disabled={loading || !email || !password}
                 className="w-full py-3 px-6 rounded-xl font-semibold text-white text-base transition-all disabled:opacity-60"
-                style={{ background: "#d97706" }}
+                style={{ background: "#d8701a" }}
               >
                 {loading
                   ? passwordFlow === "signin"
@@ -309,7 +309,7 @@ export default function LandingPageClient() {
                         setError("");
                       }}
                       className="underline font-medium"
-                      style={{ color: "#d97706" }}
+                      style={{ color: "#d8701a" }}
                     >
                       Sign up
                     </button>
@@ -324,7 +324,7 @@ export default function LandingPageClient() {
                         setError("");
                       }}
                       className="underline font-medium"
-                      style={{ color: "#d97706" }}
+                      style={{ color: "#d8701a" }}
                     >
                       Sign in
                     </button>

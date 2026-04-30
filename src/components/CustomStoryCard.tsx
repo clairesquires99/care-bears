@@ -46,7 +46,7 @@ export function CustomStoryCard({ hasRegistered }: CustomStoryCardProps) {
         </h3>
       </div>
 
-      <p className="text-sm leading-relaxed mb-5" style={{ color: "#6b5e52" }}>
+      <p className="text-sm leading-relaxed mb-5" style={{ color: "#9a7040" }}>
         Have a conversation you&apos;d rather curate yourself? Use this to create a
         custom conversation guided by our custom conversation genie!
       </p>
