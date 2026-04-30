@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Relationship } from '@/src/lib/types'
 import { Button } from '@/src/components/ui/Button'
 import { Card } from '@/src/components/ui/Card'
-import { addRelationship, deleteRelationship } from './actions'
+import { addRelationship, deleteRelationship, deleteRelationshipAndConversations } from './actions'
 
 const QUICK_NAMES = ['Mom', 'Dad', 'Grandma', 'Grandpa', 'Partner']
 
@@ -17,6 +17,8 @@ export function RelationshipsClient({ initial }: { initial: Relationship[] }) {
   const [addError, setAddError] = useState('')
   const [deleteError, setDeleteError] = useState('')
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+  const [confirmCascadeDeleteId, setConfirmCascadeDeleteId] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault()
@@ -33,10 +35,28 @@ export function RelationshipsClient({ initial }: { initial: Relationship[] }) {
   }
 
   async function handleDelete(id: string) {
+    setDeleting(true)
+    setDeleteError('')
     const result = await deleteRelationship(id)
+    setDeleting(false)
+    if (result.error === 'HAS_CONVERSATIONS') {
+      setConfirmDeleteId(null)
+      setConfirmCascadeDeleteId(id)
+      return
+    }
     if (result.error) { setDeleteError(result.error); return }
     setRelationships((prev) => prev.filter((r) => r.id !== id))
     setConfirmDeleteId(null)
+  }
+
+  async function handleCascadeDelete(id: string) {
+    setDeleting(true)
+    setDeleteError('')
+    const result = await deleteRelationshipAndConversations(id)
+    setDeleting(false)
+    if (result.error) { setDeleteError(result.error); return }
+    setRelationships((prev) => prev.filter((r) => r.id !== id))
+    setConfirmCascadeDeleteId(null)
   }
 
   return (
@@ -117,15 +137,39 @@ export function RelationshipsClient({ initial }: { initial: Relationship[] }) {
                 <p className="font-semibold" style={{ color: '#2a1806' }}>{rel.display_name}</p>
                 {rel.email && <p className="text-sm mt-0.5" style={{ color: '#9a7040' }}>{rel.email}</p>}
               </div>
-              {confirmDeleteId === rel.id ? (
+              {confirmCascadeDeleteId === rel.id ? (
+                <div className="flex flex-col items-end gap-1.5">
+                  <span className="text-xs text-right" style={{ color: '#9a7040' }}>
+                    This will also delete their conversations.
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => handleCascadeDelete(rel.id)}
+                      disabled={deleting}
+                      className="text-xs underline disabled:opacity-50"
+                      style={{ color: '#c0392b' }}
+                    >
+                      {deleting ? 'Deleting...' : 'Yes, delete everything'}
+                    </button>
+                    <button
+                      onClick={() => setConfirmCascadeDeleteId(null)}
+                      className="text-xs underline"
+                      style={{ color: '#9a7040' }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : confirmDeleteId === rel.id ? (
                 <div className="flex items-center gap-3">
                   <span className="text-xs" style={{ color: '#9a7040' }}>Remove {rel.display_name}?</span>
                   <button
                     onClick={() => handleDelete(rel.id)}
-                    className="text-xs underline"
+                    disabled={deleting}
+                    className="text-xs underline disabled:opacity-50"
                     style={{ color: '#c0392b' }}
                   >
-                    Yes, remove
+                    {deleting ? 'Removing...' : 'Yes, remove'}
                   </button>
                   <button
                     onClick={() => setConfirmDeleteId(null)}
@@ -137,7 +181,7 @@ export function RelationshipsClient({ initial }: { initial: Relationship[] }) {
                 </div>
               ) : (
                 <button
-                  onClick={() => setConfirmDeleteId(rel.id)}
+                  onClick={() => { setDeleteError(''); setConfirmDeleteId(rel.id) }}
                   className="text-xs underline"
                   style={{ color: '#c4a592' }}
                 >
