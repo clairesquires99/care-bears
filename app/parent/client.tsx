@@ -72,15 +72,15 @@ export function ParentClient({ initialConversation }: { initialConversation: Con
           >
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 mb-6 justify-center">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg" style={{ background: '#d97706' }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg" style={{ background: '#d8701a' }}>
                   C
                 </div>
-                <span className="font-semibold text-xl" style={{ color: '#1a1512' }}>{APP_NAME}</span>
+                <span className="font-semibold text-xl" style={{ color: '#2a1806' }}>{APP_NAME}</span>
               </div>
-              <h1 className="text-3xl font-bold mb-3" style={{ color: '#1a1512' }}>
+              <h1 className="text-3xl font-bold mb-3" style={{ color: '#2a1806' }}>
                 Enter your access code
               </h1>
-              <p style={{ color: '#6b5e52', fontSize: '1rem' }}>
+              <p style={{ color: '#9a7040', fontSize: '1rem' }}>
                 Your family member shared a code with you to begin a conversation.
               </p>
             </div>
@@ -97,10 +97,10 @@ export function ParentClient({ initialConversation }: { initialConversation: Con
                     className="w-full text-center text-3xl font-bold tracking-[0.3em] py-4 px-6 rounded-2xl border-2 outline-none uppercase"
                     style={{
                       borderColor: error ? '#ef4444' : '#fbd08f',
-                      background: '#f6f3ef',
-                      color: '#1a1512',
+                      background: '#f6eedb',
+                      color: '#2a1806',
                     }}
-                    onFocus={(e) => { e.target.style.borderColor = '#f59e0b' }}
+                    onFocus={(e) => { e.target.style.borderColor = '#f08838' }}
                     onBlur={(e) => { if (!error) e.target.style.borderColor = '#fbd08f' }}
                   />
                   {error && (
@@ -130,17 +130,17 @@ export function ParentClient({ initialConversation }: { initialConversation: Con
                 💬
               </div>
 
-              <p className="text-sm font-medium mb-2" style={{ color: '#9a8a7d' }}>NEW INVITATION</p>
-              <h1 className="text-3xl font-bold mb-3" style={{ color: '#1a1512' }}>
+              <p className="text-sm font-medium mb-2" style={{ color: '#9a7040' }}>NEW INVITATION</p>
+              <h1 className="text-3xl font-bold mb-3" style={{ color: '#2a1806' }}>
                 You&apos;ve been invited to a conversation
               </h1>
 
               {topic && (
                 <>
-                  <p className="text-lg font-semibold mb-2" style={{ color: '#92400e' }}>
+                  <p className="text-lg font-semibold mb-2" style={{ color: '#5a4030' }}>
                     {topic.title}
                   </p>
-                  <p style={{ color: '#6b5e52', fontSize: '1rem' }} className="mb-8">
+                  <p style={{ color: '#9a7040', fontSize: '1rem' }} className="mb-8">
                     {topic.description}
                   </p>
                 </>
@@ -154,7 +154,7 @@ export function ParentClient({ initialConversation }: { initialConversation: Con
             </div>
 
             <div className="rounded-3xl p-8" style={{ background: '#ffffff' }}>
-              <h2 className="font-bold text-lg mb-6" style={{ color: '#1a1512' }}>How it works</h2>
+              <h2 className="font-bold text-lg mb-6" style={{ color: '#2a1806' }}>How it works</h2>
               <div className="grid grid-cols-3 gap-4">
                 {[
                   { icon: '💬', title: '1. Read the question', desc: 'Each question is shown one at a time, in plain language.' },
@@ -163,8 +163,8 @@ export function ParentClient({ initialConversation }: { initialConversation: Con
                 ].map(({ icon, title, desc }) => (
                   <div key={title} className="text-center">
                     <div className="text-3xl mb-2">{icon}</div>
-                    <p className="font-semibold text-sm mb-1" style={{ color: '#1a1512' }}>{title}</p>
-                    <p className="text-xs" style={{ color: '#9a8a7d' }}>{desc}</p>
+                    <p className="font-semibold text-sm mb-1" style={{ color: '#2a1806' }}>{title}</p>
+                    <p className="text-xs" style={{ color: '#9a7040' }}>{desc}</p>
                   </div>
                 ))}
               </div>

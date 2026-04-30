@@ -17,11 +17,11 @@ type ConvRow = {
 }
 
 const categoryColors: Record<string, { bg: string; color: string }> = {
-  'Getting to Know': { bg: '#dbeafe', color: '#1d4ed8' },
-  Legacy: { bg: '#fde8c8', color: '#92400e' },
-  Medical: { bg: '#dcfce7', color: '#15803d' },
-  Healthcare: { bg: '#ffe4e6', color: '#e11d48' },
-  Finances: { bg: '#d1fae5', color: '#059669' },
+  'Getting to Know': { bg: 'rgba(42,138,170,0.14)', color: '#2a6a8a' },
+  Legacy: { bg: 'rgba(200,100,26,0.15)', color: '#a8500a' },
+  Medical: { bg: 'rgba(82,183,136,0.18)', color: '#3a7a52' },
+  Healthcare: { bg: 'rgba(200,80,80,0.14)', color: '#9a4040' },
+  Finances: { bg: 'rgba(155,93,229,0.14)', color: '#6a3ea0' },
 }
 
 const statusLabel: Record<string, string> = {
@@ -48,10 +48,10 @@ export default async function ConversationsPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold" style={{ color: '#1a1512' }}>
+        <h1 className="text-2xl font-bold" style={{ color: '#2a1806' }}>
           Your Conversations
         </h1>
-        <p className="text-sm mt-1" style={{ color: '#6b5e52' }}>
+        <p className="text-sm mt-1" style={{ color: '#9a7040' }}>
           Track conversations you&apos;ve sent and view completed responses.
         </p>
       </div>
@@ -61,9 +61,9 @@ export default async function ConversationsPage() {
           className="rounded-3xl p-10 text-center"
           style={{ background: '#ffffff' }}
         >
-          <p className="text-sm" style={{ color: '#9a8a7d' }}>
+          <p className="text-sm" style={{ color: '#9a7040' }}>
             No conversations yet.{' '}
-            <Link href="/library" className="font-medium" style={{ color: '#d97706' }}>
+            <Link href="/library" className="font-medium" style={{ color: '#d8701a' }}>
               Start one from the Library.
             </Link>
           </p>
@@ -72,7 +72,7 @@ export default async function ConversationsPage() {
         <div className="space-y-3">
           {convRows.map((conv) => {
             const topic = topics.find((t) => t.id === conv.topic_id)
-            const cat = topic ? (categoryColors[topic.category] ?? { bg: '#f6f3ef', color: '#6b5e52' }) : { bg: '#f6f3ef', color: '#6b5e52' }
+            const cat = topic ? (categoryColors[topic.category] ?? { bg: '#f6eedb', color: '#9a7040' }) : { bg: '#f6eedb', color: '#9a7040' }
             const recipient = conv.relationships?.display_name ?? 'Unknown'
             const sentDate = conv.sent_at
               ? new Date(conv.sent_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -96,13 +96,13 @@ export default async function ConversationsPage() {
                       <Link
                         href={`/library/${topic.id}`}
                         className="text-sm font-semibold hover:underline truncate"
-                        style={{ color: '#1a1512' }}
+                        style={{ color: '#2a1806' }}
                       >
                         {topic.title}
                       </Link>
                     )}
                   </div>
-                  <p className="text-xs" style={{ color: '#9a8a7d' }}>
+                  <p className="text-xs" style={{ color: '#9a7040' }}>
                     {recipient}
                     {sentDate && <> · Sent {sentDate}</>}
                   </p>
@@ -116,7 +116,7 @@ export default async function ConversationsPage() {
                   <Link
                     href={`/conversations/${conv.id}`}
                     className="text-xs font-medium whitespace-nowrap"
-                    style={{ color: '#d97706' }}
+                    style={{ color: '#d8701a' }}
                   >
                     View responses →
                   </Link>
@@ -124,7 +124,7 @@ export default async function ConversationsPage() {
                   <div className="flex items-center gap-2">
                     <span
                       className="text-xs font-mono px-2.5 py-1 rounded-xl border whitespace-nowrap"
-                      style={{ borderColor: '#e5ddd5', color: '#6b5e52', background: '#f6f3ef' }}
+                      style={{ borderColor: 'rgba(60,30,10,0.12)', color: '#9a7040', background: '#f6eedb' }}
                     >
                       {conv.access_code}
                     </span>

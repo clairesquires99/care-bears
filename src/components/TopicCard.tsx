@@ -10,17 +10,17 @@ interface TopicCardProps {
 }
 
 const categoryColors: Record<string, { bg: string; color: string }> = {
-  "Getting to Know": { bg: "#dbeafe", color: "#1d4ed8" },
-  Legacy: { bg: "#fde8c8", color: "#92400e" },
-  Medical: { bg: "#dcfce7", color: "#15803d" },
-  Healthcare: { bg: "#ffe4e6", color: "#e11d48" },
-  Finances: { bg: "#d1fae5", color: "#059669" },
+  "Getting to Know": { bg: "rgba(42,138,170,0.14)", color: "#2a6a8a" },
+  Legacy: { bg: "rgba(200,100,26,0.15)", color: "#a8500a" },
+  Medical: { bg: "rgba(82,183,136,0.18)", color: "#3a7a52" },
+  Healthcare: { bg: "rgba(200,80,80,0.14)", color: "#9a4040" },
+  Finances: { bg: "rgba(155,93,229,0.14)", color: "#6a3ea0" },
 };
 
 export function TopicCard({ topic, hasSent }: TopicCardProps) {
   const cat = categoryColors[topic.category] ?? {
-    bg: "#f6f3ef",
-    color: "#6b5e52",
+    bg: "#f6eedb",
+    color: "#9a7040",
   };
 
   return (
@@ -40,20 +40,20 @@ export function TopicCard({ topic, hasSent }: TopicCardProps) {
         {hasSent && (
           <span
             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
-            style={{ background: "#f6f3ef", color: "#9a8a7d" }}
+            style={{ background: "#f6eedb", color: "#9a7040" }}
           >
             <span
               className="w-1.5 h-1.5 rounded-full inline-block"
-              style={{ background: "#d97706" }}
+              style={{ background: "#d8701a" }}
             />
             Sent before
           </span>
         )}
       </div>
-      <h3 className="font-bold text-lg mb-2" style={{ color: "#1a1512" }}>
+      <h3 className="font-bold text-lg mb-2" style={{ color: "#2a1806" }}>
         {topic.title}
       </h3>
-      <p className="text-sm leading-relaxed" style={{ color: "#6b5e52" }}>
+      <p className="text-sm leading-relaxed" style={{ color: "#9a7040" }}>
         {topic.description}
       </p>
     </Link>
