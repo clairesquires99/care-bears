@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf8f5;
-  --foreground: #1a1512;
+  --background: #fef1e0;
+  --foreground: #2a1806;
 
   --color-brand-50: #fef8f0;
   --color-brand-100: #fde8c8;
   --color-brand-200: #fbd08f;
   --color-brand-300: #f9b55a;
-  --color-brand-400: #f59e0b;
-  --color-brand-500: #d97706;
-  --color-brand-600: #92400e;
+  --color-brand-400: #f08838;
+  --color-brand-500: #d8701a;
+  --color-brand-600: #5a4030;
 
   --color-accent: #e11d48;
   --color-accent-light: #ffe4e6;
@@ -19,11 +19,18 @@
   --color-sage-light: #d1fae5;
 
   --color-surface: #ffffff;
-  --color-surface-muted: #f6f3ef;
+  --color-surface-muted: #f6eedb;
+
+  --color-text-muted: #9a7040;
+  --color-border: rgba(60, 30, 10, 0.10);
+  --color-card-bg: rgba(255, 250, 238, 0.70);
+  --color-card-border: rgba(60, 30, 10, 0.08);
+  --color-card-hover: rgba(216, 112, 26, 0.05);
+  --color-card-border-hover: rgba(216, 112, 26, 0.25);
 }
 
 @theme inline {
-  --font-sans: var(--font-plus-jakarta);
+  --font-sans: var(--font-dm-sans);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 }
@@ -31,8 +38,14 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-plus-jakarta, sans-serif);
+  font-family: var(--font-dm-sans, sans-serif);
+  font-weight: 300;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-cormorant, serif);
 }
 
 .parent-screen {
@@ -42,10 +55,10 @@ body {
 
 .parent-screen h1 {
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 300;
 }
 
 .parent-screen h2 {
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 300;
 }

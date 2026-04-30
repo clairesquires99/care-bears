@@ -35,10 +35,10 @@ export default async function LibraryPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold" style={{ color: '#1a1512' }}>
+        <h1 className="text-2xl font-bold" style={{ color: '#2a1806' }}>
           Conversation Library
         </h1>
-        <p className="text-sm mt-1" style={{ color: '#6b5e52' }}>
+        <p className="text-sm mt-1" style={{ color: '#9a7040' }}>
           Choose a topic to start a guided conversation with your loved one.
         </p>
       </div>

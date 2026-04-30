@@ -12,21 +12,21 @@ export default function CompletePage() {
           🎁
         </div>
 
-        <h1 className="text-3xl font-bold mb-4" style={{ color: '#1a1512' }}>
+        <h1 className="text-3xl font-bold mb-4" style={{ color: '#2a1806' }}>
           Thank you
         </h1>
-        <p className="text-lg mb-6" style={{ color: '#6b5e52' }}>
+        <p className="text-lg mb-6" style={{ color: '#9a7040' }}>
           You&apos;ve just given your family a tremendous gift — the clarity and comfort of knowing your wishes.
         </p>
-        <p style={{ color: '#9a8a7d' }}>
+        <p style={{ color: '#9a7040' }}>
           Your answers have been saved. The person who invited you will be able to see your responses.
         </p>
 
         <div className="mt-10 rounded-3xl p-6" style={{ background: '#ffffff' }}>
-          <p className="text-sm font-medium mb-1" style={{ color: '#1a1512' }}>
+          <p className="text-sm font-medium mb-1" style={{ color: '#2a1806' }}>
             Want to start your own conversations?
           </p>
-          <p className="text-sm mb-4" style={{ color: '#9a8a7d' }}>
+          <p className="text-sm mb-4" style={{ color: '#9a7040' }}>
             {APP_NAME} helps families have these important discussions.
           </p>
           <Button href="/">

@@ -127,7 +127,7 @@ export function CompletedStory({
   const finalParagraphs = buildParagraphs(parseRich(finalText));
 
   return (
-    <div className="flex flex-col gap-8 text-lg leading-8" style={{ color: "#1a1512" }}>
+    <div className="flex flex-col gap-8 text-lg leading-8" style={{ color: "#2a1806" }}>
       {history.map((entry, i) => {
         const paragraphs = buildParagraphs(parseRich(entry.text));
         return (

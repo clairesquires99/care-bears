@@ -11,7 +11,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         ref={ref}
         className={`rounded-3xl ${className}`}
         style={{
-          background: muted ? '#f6f3ef' : '#ffffff',
+          background: muted ? '#f6eedb' : '#ffffff',
           ...style,
         }}
         {...props}

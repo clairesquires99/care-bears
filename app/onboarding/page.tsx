@@ -49,15 +49,15 @@ export default function OnboardingPage() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <div className="inline-flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ background: '#d97706' }}>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ background: '#d8701a' }}>
               C
             </div>
-            <span className="font-semibold text-lg" style={{ color: '#1a1512' }}>{APP_NAME}</span>
+            <span className="font-semibold text-lg" style={{ color: '#2a1806' }}>{APP_NAME}</span>
           </div>
-          <h1 className="text-2xl font-bold mb-2" style={{ color: '#1a1512' }}>
+          <h1 className="text-2xl font-bold mb-2" style={{ color: '#2a1806' }}>
             Who do you want to start a conversation with?
           </h1>
-          <p className="text-sm" style={{ color: '#6b5e52' }}>
+          <p className="text-sm" style={{ color: '#9a7040' }}>
             Add a parent or loved one to get started.
           </p>
         </div>
@@ -66,7 +66,7 @@ export default function OnboardingPage() {
           <form onSubmit={handleAdd} className="space-y-4">
             {/* Quick name chips */}
             <div>
-              <p className="text-sm font-medium mb-2" style={{ color: '#1a1512' }}>Quick select</p>
+              <p className="text-sm font-medium mb-2" style={{ color: '#2a1806' }}>Quick select</p>
               <div className="flex flex-wrap gap-2">
                 {QUICK_NAMES.map((name) => (
                   <button
@@ -76,8 +76,8 @@ export default function OnboardingPage() {
                     className="px-4 py-1.5 rounded-full text-sm font-medium border transition-all"
                     style={{
                       background: displayName === name ? '#fde8c8' : 'transparent',
-                      borderColor: displayName === name ? '#f59e0b' : '#e5ddd5',
-                      color: displayName === name ? '#92400e' : '#6b5e52',
+                      borderColor: displayName === name ? '#f08838' : 'rgba(60,30,10,0.12)',
+                      color: displayName === name ? '#5a4030' : '#9a7040',
                     }}
                   >
                     {name}
@@ -87,7 +87,7 @@ export default function OnboardingPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: '#1a1512' }}>
+              <label className="block text-sm font-medium mb-1" style={{ color: '#2a1806' }}>
                 Or enter a name
               </label>
               <input
@@ -96,12 +96,12 @@ export default function OnboardingPage() {
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="e.g. Mom, Dad, Aunt Carol"
                 className="w-full px-4 py-3 rounded-xl border text-base outline-none"
-                style={{ borderColor: '#e5ddd5', background: '#f6f3ef' }}
+                style={{ borderColor: 'rgba(60,30,10,0.12)', background: '#f6eedb' }}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: '#1a1512' }}>
+              <label className="block text-sm font-medium mb-1" style={{ color: '#2a1806' }}>
                 Their email (optional)
               </label>
               <input
@@ -110,7 +110,7 @@ export default function OnboardingPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="parent@example.com"
                 className="w-full px-4 py-3 rounded-xl border text-base outline-none"
-                style={{ borderColor: '#e5ddd5', background: '#f6f3ef' }}
+                style={{ borderColor: 'rgba(60,30,10,0.12)', background: '#f6eedb' }}
               />
             </div>
 
@@ -130,7 +130,7 @@ export default function OnboardingPage() {
           <button
             onClick={handleSkip}
             className="text-sm underline"
-            style={{ color: '#9a8a7d' }}
+            style={{ color: '#9a7040' }}
           >
             Skip for now
           </button>
