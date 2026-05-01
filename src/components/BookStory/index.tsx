@@ -201,6 +201,36 @@ export default function BookStory({
               </em>,
             );
           });
+      } else if (seg.t === "qt") {
+        const quoteWords = seg.v.trim().split(/\s+/);
+        nodes.push(
+          <span key={prefix} style={{ display: "block", marginBottom: "0.25em" }}>
+            {quoteWords.map((word, j) => (
+              <em
+                key={`${prefix}-q-${j}`}
+                className="hb-word"
+                style={{ fontStyle: "italic", color: "#f08838" }}
+              >
+                {word}{" "}
+              </em>
+            ))}
+            {seg.attr && (
+              <span
+                className="hb-word"
+                style={{
+                  display: "block",
+                  fontSize: "0.72em",
+                  fontStyle: "italic",
+                  color: "rgba(42,24,6,0.42)",
+                  marginTop: "0.2em",
+                  letterSpacing: "0.04em",
+                }}
+              >
+                — {seg.attr}
+              </span>
+            )}
+          </span>,
+        );
       } else if (seg.t === "bl") {
         const initVal = answersRef.current[seg.key] ?? "";
         nodes.push(

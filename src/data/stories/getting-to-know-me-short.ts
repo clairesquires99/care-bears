@@ -1,6 +1,7 @@
 export type BookSeg =
   | { t: 'tx'; v: string }
   | { t: 'it'; v: string }
+  | { t: 'qt'; v: string; attr?: string }
   | { t: 'br' }
   | { t: 'bl'; key: string; ph: string; multi?: boolean; italic?: boolean }
 
@@ -12,8 +13,8 @@ export const STORY: BookSpread[] = [
   {
     L: {
       segs: [
-        { t: 'it', v: '"Ring around the rosie, a pocket full of posies, ashes, ashes, we all fall down."' },
-        { t: 'it', v: "We'll get to the ashes part. First — let's talk about life." },
+        { t: 'qt', v: '“Tell me, what is it you plan to do with your one wild and precious life?”', attr: 'Mary Oliver' },
+        { t: 'tx', v: "Good question, Mary. Let’s find out." },
         { t: 'br' },
         { t: 'tx', v: "So… you want to know if I want to be buried, cremated, or sent off viking style? There's a whole side of me you'll get to know before that." },
       ],
