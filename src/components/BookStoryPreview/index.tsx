@@ -25,6 +25,27 @@ function renderParaSegs(segs: BookSeg[], answers?: Record<string, string>) {
         </em>
       );
     }
+    if (seg.t === "qt") {
+      return (
+        <span key={i} style={{ display: "block", marginBottom: "0.25em" }}>
+          <em style={{ fontStyle: "italic", color: "#f08838" }}>{seg.v} </em>
+          {seg.attr && (
+            <span
+              style={{
+                display: "block",
+                fontSize: "0.72em",
+                fontStyle: "italic",
+                color: "rgba(42,24,6,0.42)",
+                marginTop: "0.12em",
+                letterSpacing: "0.04em",
+              }}
+            >
+              — {seg.attr}
+            </span>
+          )}
+        </span>
+      );
+    }
     if (seg.t === "bl") {
       const filled = answers?.[seg.key];
       return (
