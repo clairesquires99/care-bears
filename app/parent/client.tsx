@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { createClient } from '@/src/lib/supabase/client'
@@ -72,9 +73,7 @@ export function ParentClient({ initialConversation }: { initialConversation: Con
           >
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 mb-6 justify-center">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg" style={{ background: '#d8701a' }}>
-                  C
-                </div>
+                <Image src="/logo.svg" alt={APP_NAME} width={40} height={40} />
                 <span className="font-semibold text-xl" style={{ color: '#2a1806' }}>{APP_NAME}</span>
               </div>
               <h1 className="text-3xl font-bold mb-3" style={{ color: '#2a1806' }}>

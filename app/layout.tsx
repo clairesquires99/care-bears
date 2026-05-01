@@ -20,6 +20,7 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: `${APP_NAME} — Family Conversations`,
   description: "Guided conversations to help families discuss what matters most.",
+  icons: { icon: "/logo.svg" },
 };
 
 export default function RootLayout({
