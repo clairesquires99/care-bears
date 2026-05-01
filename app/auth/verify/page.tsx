@@ -53,7 +53,7 @@ function VerifyForm() {
     <div className="w-full max-w-md text-center">
       <div className="inline-flex items-center gap-2 mb-10">
         <Image
-          src="/logo.png"
+          src="/logo.svg"
           alt={APP_NAME}
           width={32}
           height={32}
