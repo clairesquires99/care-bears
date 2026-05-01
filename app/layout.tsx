@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans, Caveat } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { APP_NAME } from "@/src/lib/constants";
@@ -17,6 +17,12 @@ const dmSans = DM_Sans({
   weight: ["300", "400", "500"],
 });
 
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: `${APP_NAME} — Family Conversations`,
   description: "Guided conversations to help families discuss what matters most.",
@@ -29,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${cormorant.variable} ${dmSans.variable} antialiased`}>
+      <body className={`${cormorant.variable} ${dmSans.variable} ${caveat.variable} antialiased`}>
         {children}
         <Analytics />
       </body>

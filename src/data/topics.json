@@ -1,5 +1,13 @@
 [
   {
+    "id": "getting-to-know-me-short",
+    "title": "Getting to Know Me — SHORT",
+    "description": "A quick, playful conversation that gets to the heart of who you are — superpowers, nicknames, childhood memories, and the one thing you hope they never forget.",
+    "category": "Getting to Know",
+    "storyFile": "",
+    "renderer": "book"
+  },
+  {
     "id": "getting-to-know-me",
     "title": "Getting to Know Me",
     "description": "A gentle conversation about personality, memories, and the parts of me I still want you to know. Designed to open the door to deeper talks without making them feel heavy.",
