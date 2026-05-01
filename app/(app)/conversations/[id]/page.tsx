@@ -4,6 +4,7 @@ import { parseTwee } from "@/src/mad-lib-death/parse-twee";
 import topicsData from "@/src/data/topics.json";
 import { createClient } from "@/src/lib/supabase/server";
 import { Topic } from "@/src/lib/types";
+import { BookStoryPreview } from "@/src/components/BookStoryPreview";
 import fs from "fs";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -30,12 +31,20 @@ export default async function ConversationDetailPage({
   const topic = topics.find((t) => t.id === conv.topic_id);
   if (!topic) notFound();
 
-  const story = parseTwee(
-    fs.readFileSync(
-      path.join(process.cwd(), "stories", topic.storyFile),
-      "utf-8",
-    ),
-  );
+  const isBook = topic.renderer === "book";
+
+  const story = !isBook
+    ? parseTwee(
+        fs.readFileSync(
+          path.join(process.cwd(), "stories", topic.storyFile),
+          "utf-8",
+        ),
+      )
+    : null;
+
+  const bookSpreads = isBook
+    ? (await import("@/src/data/stories/getting-to-know-me-short")).STORY
+    : null;
 
   const { data: answers } = await supabase
     .from("answers")
@@ -101,7 +110,14 @@ export default async function ConversationDetailPage({
         </div>
       </div>
 
-      {conv.status === "completed" && conv.choices && (
+      {conv.status === "completed" && bookSpreads && (
+        <BookStoryPreview
+          spreads={bookSpreads}
+          answers={(conv as Record<string, unknown>).variables as Record<string, string> ?? {}}
+        />
+      )}
+
+      {conv.status === "completed" && story && conv.choices && (
         <CompletedStory
           story={story}
           choices={conv.choices}

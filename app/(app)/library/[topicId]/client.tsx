@@ -9,6 +9,8 @@ import { sendConversation } from "./actions";
 import { Relationship, Topic } from "@/src/lib/types";
 import { StaticStoryPreview } from "@/src/mad-lib-death/StaticStoryPreview";
 import { TweeStory } from "@/src/mad-lib-death/parse-twee";
+import { BookStoryPreview } from "@/src/components/BookStoryPreview";
+import type { BookSpread } from "@/src/data/stories/getting-to-know-me-short";
 import { track } from "@vercel/analytics";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -81,11 +83,13 @@ function generateCode(): string {
 export default function TopicDetailClient({
   topicId,
   story,
+  bookSpreads,
   relationships,
   userId,
 }: {
   topicId: string;
   story: TweeStory | null;
+  bookSpreads?: BookSpread[] | null;
   relationships: Relationship[];
   userId: string;
 }) {
@@ -512,6 +516,13 @@ export default function TopicDetailClient({
                   Coming soon
                 </p>
               </div>
+            ) : bookSpreads ? (
+              <>
+                <p className="text-sm mb-6" style={{ color: "#9a7040" }}>
+                  Here&apos;s a preview of how this conversation might flow.
+                </p>
+                <BookStoryPreview spreads={bookSpreads} />
+              </>
             ) : story ? (
               <>
                 <p className="text-sm mb-6" style={{ color: "#9a7040" }}>
