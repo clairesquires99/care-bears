@@ -26,164 +26,30 @@ export default function BookStory({
 
   const answersRef = useRef<Record<string, string>>({ ...initialAnswers });
   const busyRef = useRef(false);
-  const isNavigatingRef = useRef(false);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Butterfly refs
   const bookRef = useRef<HTMLDivElement>(null);
-  const bfRef = useRef<SVGSVGElement>(null);
-  const bLURef = useRef<SVGEllipseElement>(null);
-  const bLLRef = useRef<SVGEllipseElement>(null);
-  const bRURef = useRef<SVGEllipseElement>(null);
-  const bRLRef = useRef<SVGEllipseElement>(null);
-  const bxRef = useRef(-60);
-  const byRef = useRef(200);
-  const btRef = useRef(0);
-  const bRafRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
-  const bQueueRef = useRef<Array<{ x: number; y: number; cb?: () => void }>>([]);
-  const bTargetRef = useRef<{ x: number; y: number; cb?: () => void } | null>(null);
-  const bSpeedRef = useRef(5.5);
-
   const flapRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
 
-  // ── Butterfly ─────────────────────────────────────────────────────────────
+  // ── Word reveal (staggered fade) ──────────────────────────────────────────
 
-  const bFlap = useCallback((t: number) => {
-    const s = 0.62 + 0.48 * Math.abs(Math.sin(t * 7.2));
-    bLURef.current?.setAttribute("ry", (8 * s).toFixed(2));
-    bRURef.current?.setAttribute("ry", (8 * s).toFixed(2));
-    bLLRef.current?.setAttribute("ry", (5.5 * s).toFixed(2));
-    bRLRef.current?.setAttribute("ry", (5.5 * s).toFixed(2));
-  }, []);
-
-  const bPlace = useCallback((x: number, y: number, facingLeft: boolean) => {
-    if (!bfRef.current) return;
-    bfRef.current.style.left = x - 22 + "px";
-    bfRef.current.style.top = y - 18 + "px";
-    bfRef.current.style.transform = facingLeft ? "scaleX(-1)" : "scaleX(1)";
-  }, []);
-
-  const bShow = useCallback((v: boolean) => {
-    if (!bfRef.current) return;
-    bfRef.current.style.opacity = v ? "1" : "0";
-  }, []);
-
-  const bLoop = useCallback(() => {
-    btRef.current += 0.016;
-    bFlap(btRef.current);
-
-    if (!bTargetRef.current && bQueueRef.current.length > 0) {
-      bTargetRef.current = bQueueRef.current.shift()!;
-    }
-
-    if (bTargetRef.current) {
-      const dx = bTargetRef.current.x - bxRef.current;
-      const dy = bTargetRef.current.y - byRef.current;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const speed = bSpeedRef.current;
-      if (dist < speed + 0.5) {
-        bxRef.current = bTargetRef.current.x;
-        byRef.current = bTargetRef.current.y;
-        bTargetRef.current.cb?.();
-        bTargetRef.current = null;
-      } else {
-        const nx = dx / dist;
-        const ny = dy / dist;
-        const perp = Math.sin(btRef.current * 5.5) * 3.2;
-        bxRef.current += nx * speed + -ny * perp * 0.32;
-        byRef.current += ny * speed + nx * perp * 0.32;
-        bPlace(bxRef.current, byRef.current, dx < 0);
-      }
-      bRafRef.current = requestAnimationFrame(bLoop);
-    } else {
-      bShow(false);
-    }
-  }, [bFlap, bPlace, bShow]);
-
-  const bStartReveal = useCallback(
-    (waypoints: Array<{ x: number; y: number; cb?: () => void }>) => {
-      if (bRafRef.current) cancelAnimationFrame(bRafRef.current);
-      bQueueRef.current = waypoints.slice();
-      bTargetRef.current = null;
-
-      if (bQueueRef.current.length === 0) {
-        bShow(false);
-        return;
-      }
-
-      const first = bQueueRef.current[0];
-      bxRef.current = -60;
-      byRef.current = first.y;
-      bPlace(bxRef.current, byRef.current, false);
-      bShow(true);
-      bRafRef.current = requestAnimationFrame(bLoop);
-    },
-    [bLoop, bPlace, bShow],
-  );
-
-  // ── Reveal helpers ────────────────────────────────────────────────────────
-
-  const revealInstant = useCallback(() => {
-    if (!bookRef.current) return;
+  const revealWords = useCallback((onDone?: () => void) => {
+    if (!bookRef.current) { onDone?.(); return; }
     const els = Array.from(
       bookRef.current.querySelectorAll<HTMLElement>(".hb-word, .hb-blank"),
     );
     els.forEach((el, i) => {
       setTimeout(() => el.classList.add("hb-on"), i * 28);
     });
+    if (onDone) setTimeout(onDone, els.length * 28 + 300);
   }, []);
-
-  const revealWithButterfly = useCallback(
-    (onDone?: () => void) => {
-      if (!bookRef.current) return;
-      const bookRect = bookRef.current.getBoundingClientRect();
-      const els = Array.from(
-        bookRef.current.querySelectorAll<HTMLElement>(".hb-word, .hb-blank"),
-      ).filter((el) => {
-        const r = el.getBoundingClientRect();
-        return r.width > 0 && r.height > 0;
-      });
-
-      if (!els.length) {
-        onDone?.();
-        return;
-      }
-
-      const waypoints: Array<{ x: number; y: number; cb?: () => void }> = [];
-      const firstR = els[0].getBoundingClientRect();
-      waypoints.push({
-        x: firstR.left - bookRect.left - 55,
-        y: firstR.top - bookRect.top + firstR.height * 0.5,
-      });
-
-      els.forEach((el) => {
-        const r = el.getBoundingClientRect();
-        waypoints.push({
-          x: r.left - bookRect.left + r.width * 0.45,
-          y: r.top - bookRect.top + r.height * 0.5,
-          cb: () => el.classList.add("hb-on"),
-        });
-      });
-
-      const lastR = els[els.length - 1].getBoundingClientRect();
-      waypoints.push({
-        x: lastR.right - bookRect.left + 80,
-        y: lastR.top - bookRect.top + lastR.height * 0.5,
-        cb: onDone,
-      });
-
-      bStartReveal(waypoints);
-    },
-    [bStartReveal],
-  );
 
   // ── First-load reveal ─────────────────────────────────────────────────────
 
   useEffect(() => {
-    const t = setTimeout(revealInstant, 100);
+    const t = setTimeout(revealWords, 100);
     return () => clearTimeout(t);
-    // only on first mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -205,10 +71,6 @@ export default function BookStory({
     (idx: number) => {
       if (busyRef.current || idx === cur || idx < 0 || idx >= N) return;
       busyRef.current = true;
-      isNavigatingRef.current = true;
-
-      if (bRafRef.current) cancelAnimationFrame(bRafRef.current);
-      bShow(false);
 
       const isForward = idx > cur;
       const flap = flapRef.current;
@@ -239,14 +101,11 @@ export default function BookStory({
         setCur(idx);
         saveProgress();
         setTimeout(() => {
-          revealWithButterfly(() => {
-            busyRef.current = false;
-            isNavigatingRef.current = false;
-          });
+          revealWords(() => { busyRef.current = false; });
         }, 120);
       }, 560);
     },
-    [cur, N, bShow, saveProgress, revealWithButterfly],
+    [cur, N, saveProgress, revealWords],
   );
 
   const handleNext = useCallback(() => {
@@ -257,16 +116,17 @@ export default function BookStory({
     }
   }, [cur, N, goTo, saveProgress]);
 
-  const handleExit = useCallback(() => router.push(completePath), [router, completePath]);
+  const handleExit = useCallback(
+    () => router.push(completePath),
+    [router, completePath],
+  );
 
   const handleRestart = useCallback(() => {
-    if (bRafRef.current) cancelAnimationFrame(bRafRef.current);
-    bShow(false);
     busyRef.current = false;
     setShowDone(false);
     setCur(0);
-    setTimeout(revealInstant, 120);
-  }, [bShow, revealInstant]);
+    setTimeout(revealWords, 120);
+  }, [revealWords]);
 
   const handlePrev = useCallback(() => goTo(cur - 1), [cur, goTo]);
 
@@ -287,7 +147,6 @@ export default function BookStory({
 
   useEffect(() => {
     return () => {
-      if (bRafRef.current) cancelAnimationFrame(bRafRef.current);
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     };
   }, []);
@@ -392,15 +251,10 @@ export default function BookStory({
   return (
     <>
       <style>{`
-        .hb-word { display: inline; opacity: 0; }
-        .hb-word.hb-on { opacity: 1; animation: hb-inkBloom 0.28s ease forwards; }
-        .hb-blank { opacity: 0; transition: opacity 0.3s ease; }
+        .hb-word { display: inline; opacity: 0; transition: opacity 0.35s ease; }
+        .hb-word.hb-on { opacity: 1; }
+        .hb-blank { opacity: 0; transition: opacity 0.35s ease; }
         .hb-blank.hb-on { opacity: 1; }
-        @keyframes hb-inkBloom {
-          0%   { opacity: 0; filter: blur(1.5px); transform: scale(0.92); }
-          60%  { opacity: 1; filter: blur(0); transform: scale(1.03); }
-          100% { opacity: 1; filter: blur(0); transform: scale(1); }
-        }
         .hb-blank:empty::before {
           content: attr(data-ph);
           color: rgba(42,24,6,0.22);
@@ -701,88 +555,6 @@ export default function BookStory({
             }}
           />
 
-          {/* Butterfly SVG */}
-          <svg
-            ref={bfRef}
-            style={{
-              position: "absolute",
-              zIndex: 50,
-              pointerEvents: "none",
-              width: 44,
-              height: 36,
-              opacity: 0,
-              transition: "opacity 0.4s",
-              willChange: "left, top",
-            }}
-            viewBox="0 0 44 36"
-            fill="none"
-          >
-            <ellipse
-              ref={bLURef}
-              cx="13"
-              cy="12"
-              rx="11.5"
-              ry="8"
-              fill="#d8701a"
-              opacity="0.84"
-              transform="rotate(-20 13 12)"
-            />
-            <ellipse
-              ref={bLLRef}
-              cx="10.5"
-              cy="23"
-              rx="8"
-              ry="5.5"
-              fill="#f08838"
-              opacity="0.70"
-              transform="rotate(14 10.5 23)"
-            />
-            <ellipse
-              ref={bRURef}
-              cx="31"
-              cy="12"
-              rx="11.5"
-              ry="8"
-              fill="#d8701a"
-              opacity="0.84"
-              transform="rotate(20 31 12)"
-            />
-            <ellipse
-              ref={bRLRef}
-              cx="33.5"
-              cy="23"
-              rx="8"
-              ry="5.5"
-              fill="#f08838"
-              opacity="0.70"
-              transform="rotate(-14 33.5 23)"
-            />
-            <ellipse
-              cx="22"
-              cy="18"
-              rx="2.1"
-              ry="8.2"
-              fill="#2a1806"
-              opacity="0.78"
-            />
-            <path
-              d="M22 10.5 Q18 4 15 2"
-              stroke="#2a1806"
-              strokeWidth="0.9"
-              strokeLinecap="round"
-              opacity="0.52"
-            />
-            <path
-              d="M22 10.5 Q26 4 29 2"
-              stroke="#2a1806"
-              strokeWidth="0.9"
-              strokeLinecap="round"
-              opacity="0.52"
-            />
-            <circle cx="14.5" cy="1.8" r="1.3" fill="#2a1806" opacity="0.42" />
-            <circle cx="29.5" cy="1.8" r="1.3" fill="#2a1806" opacity="0.42" />
-          </svg>
-
           {/* Flap (page turn animation) */}
           <div
             ref={flapRef}
@@ -829,50 +601,11 @@ export default function BookStory({
           >
             <div style={{ opacity: 0.13, marginBottom: 24 }}>
               <svg width="52" height="42" viewBox="0 0 44 36" fill="none">
-                <ellipse
-                  cx="13"
-                  cy="12"
-                  rx="11.5"
-                  ry="8"
-                  fill="#d8701a"
-                  opacity="0.84"
-                  transform="rotate(-20 13 12)"
-                />
-                <ellipse
-                  cx="10.5"
-                  cy="23"
-                  rx="8"
-                  ry="5.5"
-                  fill="#f08838"
-                  opacity="0.70"
-                  transform="rotate(14 10.5 23)"
-                />
-                <ellipse
-                  cx="31"
-                  cy="12"
-                  rx="11.5"
-                  ry="8"
-                  fill="#d8701a"
-                  opacity="0.84"
-                  transform="rotate(20 31 12)"
-                />
-                <ellipse
-                  cx="33.5"
-                  cy="23"
-                  rx="8"
-                  ry="5.5"
-                  fill="#f08838"
-                  opacity="0.70"
-                  transform="rotate(-14 33.5 23)"
-                />
-                <ellipse
-                  cx="22"
-                  cy="18"
-                  rx="2.1"
-                  ry="8.2"
-                  fill="#2a1806"
-                  opacity="0.78"
-                />
+                <ellipse cx="13" cy="12" rx="11.5" ry="8" fill="#d8701a" opacity="0.84" transform="rotate(-20 13 12)" />
+                <ellipse cx="10.5" cy="23" rx="8" ry="5.5" fill="#f08838" opacity="0.70" transform="rotate(14 10.5 23)" />
+                <ellipse cx="31" cy="12" rx="11.5" ry="8" fill="#d8701a" opacity="0.84" transform="rotate(20 31 12)" />
+                <ellipse cx="33.5" cy="23" rx="8" ry="5.5" fill="#f08838" opacity="0.70" transform="rotate(-14 33.5 23)" />
+                <ellipse cx="22" cy="18" rx="2.1" ry="8.2" fill="#2a1806" opacity="0.78" />
               </svg>
             </div>
             <div
@@ -995,14 +728,7 @@ export default function BookStory({
                 e.currentTarget.style.color = "#9a7040";
               }}
             >
-              <svg
-                width="13"
-                height="13"
-                viewBox="0 0 13 13"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M8.5 1.5L3.5 6.5l5 5" />
               </svg>
               previous
@@ -1044,14 +770,7 @@ export default function BookStory({
               }}
             >
               {cur >= N - 1 ? "finish" : "next"}
-              <svg
-                width="13"
-                height="13"
-                viewBox="0 0 13 13"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M4.5 1.5l5 5-5 5" />
               </svg>
             </button>
