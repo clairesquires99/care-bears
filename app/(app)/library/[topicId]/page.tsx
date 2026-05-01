@@ -16,17 +16,26 @@ export default async function TopicDetailPage({
   const { topicId } = await params;
   const topic = topics.find((t) => t.id === topicId);
 
-  const story = topic
-    ? parseTwee(
-        fs.readFileSync(
-          path.join(process.cwd(), "stories", topic.storyFile),
-          "utf-8",
-        ),
-      )
+  const isBook = topic?.renderer === "book";
+
+  const story =
+    !isBook && topic && topic.storyFile
+      ? parseTwee(
+          fs.readFileSync(
+            path.join(process.cwd(), "stories", topic.storyFile),
+            "utf-8",
+          ),
+        )
+      : null;
+
+  const bookSpreads = isBook
+    ? (await import("@/src/data/stories/getting-to-know-me-short")).STORY
     : null;
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const { data } = await supabase
     .from("relationships")
     .select("*")
@@ -34,5 +43,13 @@ export default async function TopicDetailPage({
     .order("created_at");
   const relationships = (data ?? []) as Relationship[];
 
-  return <TopicDetailClient topicId={topicId} story={story} relationships={relationships} userId={user?.id ?? ''} />;
+  return (
+    <TopicDetailClient
+      topicId={topicId}
+      story={story}
+      bookSpreads={bookSpreads}
+      relationships={relationships}
+      userId={user?.id ?? ""}
+    />
+  );
 }

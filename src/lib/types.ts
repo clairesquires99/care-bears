@@ -40,6 +40,7 @@ export interface Topic {
   description: string
   category: string
   storyFile: string
+  renderer?: 'twee' | 'book'
 }
 
 export interface ConversationWithRelationship extends Conversation {
